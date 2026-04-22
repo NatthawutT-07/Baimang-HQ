@@ -1,0 +1,159 @@
+import { useState, useEffect } from 'react';
+import { Plus, Edit2, Trash2, Search, Gift, Star } from 'lucide-react';
+import { rewardService } from '../../../services/rewardService';
+import { toast } from 'react-toastify';
+
+export default function RewardSection() {
+  const [rewards, setRewards] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [editingReward, setEditingReward] = useState(null);
+  const [formData, setFormData] = useState({ title: '', point_reward: '', image: null });
+
+  useEffect(() => { fetchRewards(); }, []);
+
+  const fetchRewards = async () => {
+    setLoading(true);
+    try { const r = await rewardService.getAll(); if (r.ok) setRewards(r.data); }
+    catch { toast.error('ไม่สามารถโหลดข้อมูลรางวัลได้'); } finally { setLoading(false); }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); setLoading(true);
+    try {
+      const data = new FormData();
+      data.append('title', formData.title);
+      data.append('point_reward', formData.point_reward);
+      if (formData.image) {
+        data.append('image', formData.image);
+      }
+
+      if (editingReward) {
+        const r = await rewardService.update(editingReward.id, data);
+        if (r.ok) toast.success('แก้ไขข้อมูลรางวัลสำเร็จ');
+      } else {
+        const r = await rewardService.create(data);
+        if (r.ok) toast.success('เพิ่มรางวัลสำเร็จ');
+      }
+      fetchRewards(); handleCloseModal();
+    } catch (err) { toast.error(err.response?.data?.message || 'เกิดข้อผิดพลาด'); } finally { setLoading(false); }
+  };
+
+  const handleDelete = async (id) => {
+    if (!confirm('ต้องการลบรางวัลนี้หรือไม่?')) return;
+    try { const r = await rewardService.delete(id); if (r.ok) { toast.success('ลบรางวัลสำเร็จ'); fetchRewards(); } }
+    catch { toast.error('ไม่สามารถลบรางวัลได้'); }
+  };
+
+  const handleEdit = (rw) => { setEditingReward(rw); setFormData({ title: rw.title, point_reward: rw.point_reward, image: null }); setShowModal(true); };
+  const handleCloseModal = () => { setShowModal(false); setEditingReward(null); setFormData({ title: '', point_reward: '', image: null }); };
+  const filteredRewards = rewards.filter(r => r.title.toLowerCase().includes(searchTerm.toLowerCase()));
+  const inputCls = "w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 bg-white transition-all placeholder:text-slate-400";
+
+  return (
+    <div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+        <div>
+          <h2 className="text-lg font-bold text-slate-800 !m-0">จัดการรางวัล</h2>
+          <p className="text-xs text-slate-400 mt-0.5">{rewards.length} รางวัลทั้งหมด</p>
+        </div>
+        <button id="btn-add-reward" onClick={() => setShowModal(true)}
+          className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-all shadow-sm shadow-blue-500/20 hover:shadow-md hover:shadow-blue-500/25">
+          <Plus className="h-4 w-4" /><span>เพิ่มรางวัล</span>
+        </button>
+      </div>
+
+      {/* <div className="mb-4 relative">
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+        <input id="search-reward" type="text" placeholder="ค้นหารางวัล..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 bg-white transition-all" />
+      </div> */}
+
+      {loading && (<div className="flex justify-center py-16"><div className="w-8 h-8 border-[3px] border-slate-200 border-t-blue-500 rounded-full animate-spin" /></div>)}
+
+      {!loading && (
+        <div className="overflow-x-auto border border-slate-200/80 rounded-xl">
+          <table className="w-full text-left text-sm whitespace-nowrap">
+            <thead className="bg-slate-50/80 border-b border-slate-200/80">
+              <tr className="text-[11px] uppercase tracking-wider text-slate-500 font-semibold">
+                <th className="px-4 py-3.5 w-16">รูปภาพ</th>
+                <th className="px-4 py-3.5">ชื่อรางวัล</th>
+                <th className="px-4 py-3.5 text-right">แต้มที่ต้องใช้</th>
+                <th className="px-4 py-3.5 text-center w-32">จัดการ</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {filteredRewards.map((reward) => (
+                <tr key={reward.id} className="hover:bg-blue-50/30 transition-colors group">
+                  <td className="px-4 py-2.5">
+                    {reward.image_url ? (
+                      <img
+                        src={`${import.meta.env.VITE_API_URL || 'http://localhost:5001/api'}`.replace('/api', '') + reward.image_url}
+                        alt={reward.title}
+                        className="w-10 h-10 rounded-xl object-cover border border-slate-200/80 shadow-sm"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center border border-amber-200/50">
+                        <Gift className="w-5 h-5 text-amber-400" />
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-4 py-3.5 font-medium text-slate-800">{reward.title}</td>
+                  <td className="px-4 py-3.5 text-right">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200/50">
+                      <Star className="w-3 h-3 text-amber-500" />{reward.point_reward} แต้ม
+                    </span>
+                  </td>
+                  <td className="px-4 py-3.5 text-center">
+                    <div className="flex items-center justify-center gap-1">
+                      <button onClick={() => handleEdit(reward)} className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="แก้ไข"><Edit2 className="h-4 w-4" /></button>
+                      <button onClick={() => handleDelete(reward.id)} className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="ลบ"><Trash2 className="h-4 w-4" /></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {filteredRewards.length === 0 && !loading && (
+            <div className="text-center py-16"><Gift className="w-10 h-10 text-slate-200 mx-auto mb-3" /><p className="text-sm text-slate-400">ไม่พบข้อมูลรางวัล</p></div>
+          )}
+        </div>
+      )}
+
+      {showModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={handleCloseModal}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md animate-[modalIn_0.2s_ease-out] border border-slate-100" onClick={(e) => e.stopPropagation()}>
+            <div className="px-6 py-5 border-b border-slate-100">
+              <h3 className="text-base font-bold text-slate-800 !m-0">{editingReward ? 'แก้ไขรางวัล' : 'เพิ่มรางวัลใหม่'}</h3>
+              <p className="text-xs text-slate-500 mt-1">{editingReward ? 'แก้ไขข้อมูลรางวัลที่เลือก' : 'กรอกข้อมูลรางวัลที่ต้องการเพิ่ม'}</p>
+            </div>
+            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1.5">ชื่อรางวัล</label>
+                <input type="text" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} required className={inputCls} />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1.5">รูปภาพคูปอง/รางวัล</label>
+                <input type="file" accept="image/*" onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })} className={inputCls} />
+                {editingReward && editingReward.image_url && !formData.image && (
+                  <p className="text-xs text-slate-400 mt-1.5">มีรูปภาพอยู่แล้ว หากไม่ต้องการเปลี่ยนไม่ต้องอัปโหลดใหม่</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1.5">จำนวนแต้ม</label>
+                <input type="number" min="0" value={formData.point_reward} onChange={(e) => setFormData({ ...formData, point_reward: e.target.value })} required className={inputCls} />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="button" onClick={handleCloseModal} className="flex-1 px-4 py-2.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition-colors">ยกเลิก</button>
+                <button type="submit" disabled={loading} className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 rounded-xl transition-all disabled:opacity-50 shadow-sm shadow-blue-500/20">
+                  {loading ? 'กำลังบันทึก...' : 'บันทึก'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
