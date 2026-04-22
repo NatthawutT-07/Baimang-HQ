@@ -89,7 +89,7 @@ export default function RewardSection() {
                   <td className="px-4 py-2.5">
                     {reward.image_url ? (
                       <img
-                        src={`${import.meta.env.VITE_API_URL || 'http://localhost:5001/api'}`.replace('/api', '') + reward.image_url}
+                        src={`${import.meta.env.VITE_API_URL}` + reward.image_url}
                         alt={reward.title}
                         className="w-10 h-10 rounded-xl object-cover border border-slate-200/80 shadow-sm"
                       />
