@@ -34,13 +34,11 @@ export default function SalesLogForm() {
   const [currentTime, setCurrentTime] = useState(getThaiTime());
 
   const fetchData = async () => {
-    if (employees.length > 0 && branches.length > 0) return;
-
     setLoading(true);
     try {
       const [empRes, branchRes] = await Promise.all([
         employeeService.getAll(),
-        branchService.getAll({ month: new Date().getMonth() + 1 })
+        branchService.getAll()
       ]);
       const normalEmployees = (empRes.data || []).filter(emp => emp.role !== 'admin');
       setEmployees(normalEmployees);
