@@ -67,7 +67,7 @@ export default function SalesLogForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (submitting) return;
-    
+
     if (!formData.employee_code || !formData.branch_code || !formData.sales || !formData.date) {
       alert('กรุณากรอกข้อมูลให้ครบถ้วน');
       return;
@@ -109,7 +109,7 @@ export default function SalesLogForm() {
     } catch (error) {
       console.error('Failed to submit:', error);
       let errorMsg = 'เกิดข้อผิดพลาดในการบันทึกข้อมูล';
-      
+
       const responseData = error.response?.data;
       if (responseData) {
         if (typeof responseData === 'object' && responseData.message) {
@@ -267,8 +267,8 @@ export default function SalesLogForm() {
                       <input
                         type="date"
                         name="date"
-                        min={MIN_DATE}
-                        max={getThaiNow().toISOString().slice(0, 10)}
+                        // min={MIN_DATE}
+                        // max={getThaiNow().toISOString().slice(0, 10)}
                         value={formData.date}
                         onChange={handleChange}
                         className="w-full border-emerald-200 rounded-lg shadow-sm focus:border-emerald-400 focus:ring-emerald-200 px-4 py-2 border"
