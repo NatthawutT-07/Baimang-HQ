@@ -148,7 +148,7 @@ export default function RewardSection() {
                 {reward.image_url ? (
                   <div className="w-2/5 sm:w-1/3 overflow-hidden bg-slate-50 flex items-center justify-center shrink-0 border-r border-emerald-50">
                     <img
-                      src={`${import.meta.env.VITE_API_URL || 'http://localhost:5001/api'}`.replace('/api', '') + reward.image_url}
+                      src={`${import.meta.env.VITE_API_URL}` + reward.image_url}
                       alt={reward.title}
                       className="w-full h-28 sm:h-full object-contain group-hover:scale-105 transition-transform duration-300 p-2"
                       onError={(e) => {
