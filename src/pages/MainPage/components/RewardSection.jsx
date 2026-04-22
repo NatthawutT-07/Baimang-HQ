@@ -138,29 +138,27 @@ export default function RewardSection() {
         {/* Content */}
         <div className="p-3 sm:p-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4 sm:gap-6">
-            {rewards.map((reward) => (
+            {rewards.map((reward, index) => (
               <div key={reward.id} className="bg-white border border-emerald-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group flex flex-row h-auto sm:h-36">
                 <div className="absolute top-0 right-0 bg-emerald-600 text-white px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-bl-xl text-xs sm:text-sm font-bold shadow-sm z-10">
                   {reward.point_reward} แต้ม
                 </div>
 
                 {/* Image Area */}
-                {reward.image_url ? (
-                  <div className="w-2/5 sm:w-1/3 overflow-hidden bg-slate-50 flex items-center justify-center shrink-0 border-r border-emerald-50">
-                    <img
-                      src={`${import.meta.env.VITE_API_URL}` + reward.image_url}
-                      alt={reward.title}
-                      className="w-full h-28 sm:h-full object-contain group-hover:scale-105 transition-transform duration-300 p-2"
-                      onError={(e) => {
-                        e.target.parentElement.innerHTML = '<div class="w-full h-full min-h-[100px] flex items-center justify-center bg-emerald-50 text-emerald-400"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg></div>';
-                      }}
-                    />
-                  </div>
-                ) : (
-                  <div className="w-2/5 sm:w-1/3 h-full min-h-[100px] bg-emerald-50 flex items-center justify-center shrink-0 border-r border-emerald-50">
-                    <Gift className="h-8 w-8 sm:h-10 sm:w-10 text-emerald-300" />
-                  </div>
-                )}
+                <div className="w-2/5 sm:w-1/3 overflow-hidden bg-slate-50 flex items-center justify-center shrink-0 border-r border-emerald-50">
+                  <img
+                    src={reward.image_url
+                      ? `${import.meta.env.VITE_API_URL}${reward.image_url}`
+                      : `/images/coupon${(index % 3) + 1}.png`
+                    }
+                    alt={reward.title}
+                    className="w-full h-28 sm:h-full object-contain group-hover:scale-105 transition-transform duration-300 p-2"
+                    onError={(e) => {
+                      // Fallback to sequential coupon if backend image fails
+                      e.target.src = `/images/coupon${(index % 3) + 1}.png`;
+                    }}
+                  />
+                </div>
 
                 {/* Text & Button */}
                 <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between min-w-0">

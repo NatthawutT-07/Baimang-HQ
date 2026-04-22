@@ -44,7 +44,7 @@ export default function LogSection() {
           <p className="text-xs text-slate-400 mt-0.5">{pagination.total} รายการทั้งหมด</p>
         </div>
         <div className="flex space-x-1 bg-slate-100/80 p-1 rounded-xl w-fit border border-slate-200/50">
-          {[{ value: '', label: 'ทั้งหมด' }, { value: 'ยอดขาย', label: 'ยอดขาย' }, { value: 'แลกรางวัล', label: 'แลกรางวัล' }].map(f => (
+          {[{ value: '', label: 'ทั้งหมด' }, { value: 'ขาย', label: 'ขาย' }, { value: 'แลกรางวัล', label: 'แลกรางวัล' }].map(f => (
             <button key={f.value} onClick={() => setActionFilter(f.value)}
               className={`px-3.5 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 ${
                 actionFilter === f.value 
@@ -81,9 +81,9 @@ export default function LogSection() {
                 <tr key={log.id} className="hover:bg-blue-50/30 transition-colors">
                   <td className="px-4 py-3.5">
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
-                      log.action === 'ยอดขาย' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50' : 'bg-blue-50 text-blue-700 border border-blue-200/50'
+                      log.action === 'ขาย' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50' : 'bg-blue-50 text-blue-700 border border-blue-200/50'
                     }`}>
-                      {log.action === 'ยอดขาย' ? <ArrowUpCircle className="w-3 h-3" /> : <Gift className="w-3 h-3" />}
+                      {log.action === 'ขาย' ? <ArrowUpCircle className="w-3 h-3" /> : <Gift className="w-3 h-3" />}
                       {log.action}
                     </span>
                   </td>
@@ -96,7 +96,7 @@ export default function LogSection() {
                     <p className="text-[11px] text-slate-400 font-mono !m-0">{log.branch_code}</p>
                   </td>
                   <td className="px-4 py-3.5 text-right text-slate-600">
-                    {log.action === 'ยอดขาย' && <span>{log.sales?.toLocaleString()} / {log.target?.toLocaleString()} ฿</span>}
+                    {log.action === 'ขาย' && <span>{log.sales?.toLocaleString()} / {log.target?.toLocaleString()} ฿</span>}
                     {log.action === 'แลกรางวัล' && <span>{log.reward}</span>}
                   </td>
                   <td className="px-4 py-3.5 text-right">

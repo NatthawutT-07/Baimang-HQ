@@ -77,7 +77,7 @@ export default function RewardSection() {
           <table className="w-full text-left text-sm whitespace-nowrap">
             <thead className="bg-slate-50/80 border-b border-slate-200/80">
               <tr className="text-[11px] uppercase tracking-wider text-slate-500 font-semibold">
-                <th className="px-4 py-3.5 w-16">รูปภาพ</th>
+                {/* <th className="px-4 py-3.5 w-16">รูปภาพ</th> */}
                 <th className="px-4 py-3.5">ชื่อรางวัล</th>
                 <th className="px-4 py-3.5 text-right">แต้มที่ต้องใช้</th>
                 <th className="px-4 py-3.5 text-center w-32">จัดการ</th>
@@ -86,19 +86,19 @@ export default function RewardSection() {
             <tbody className="divide-y divide-slate-100">
               {filteredRewards.map((reward) => (
                 <tr key={reward.id} className="hover:bg-blue-50/30 transition-colors group">
-                  <td className="px-4 py-2.5">
+                  {/* <td className="px-4 py-2.5">
                     {reward.image_url ? (
-                      <img
-                        src={`${import.meta.env.VITE_API_URL}` + reward.image_url}
-                        alt={reward.title}
-                        className="w-10 h-10 rounded-xl object-cover border border-slate-200/80 shadow-sm"
-                      />
+                      // <img
+                      //   src={`${import.meta.env.VITE_API_URL}` + reward.image_url}
+                      //   alt={reward.title}
+                      //   className="w-10 h-10 rounded-xl object-cover border border-slate-200/80 shadow-sm"
+                      // />
                     ) : (
                       <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center border border-amber-200/50">
                         <Gift className="w-5 h-5 text-amber-400" />
                       </div>
-                    )}
-                  </td>
+                    )} */}
+                  {/* </td> */}
                   <td className="px-4 py-3.5 font-medium text-slate-800">{reward.title}</td>
                   <td className="px-4 py-3.5 text-right">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200/50">
@@ -133,13 +133,13 @@ export default function RewardSection() {
                 <label className="block text-xs font-semibold text-slate-600 mb-1.5">ชื่อรางวัล</label>
                 <input type="text" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} required className={inputCls} />
               </div>
-              <div>
+              {/* <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1.5">รูปภาพคูปอง/รางวัล</label>
                 <input type="file" accept="image/*" onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })} className={inputCls} />
                 {editingReward && editingReward.image_url && !formData.image && (
                   <p className="text-xs text-slate-400 mt-1.5">มีรูปภาพอยู่แล้ว หากไม่ต้องการเปลี่ยนไม่ต้องอัปโหลดใหม่</p>
                 )}
-              </div>
+              </div> */}
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1.5">จำนวนแต้ม</label>
                 <input type="number" min="0" value={formData.point_reward} onChange={(e) => setFormData({ ...formData, point_reward: e.target.value })} required className={inputCls} />
