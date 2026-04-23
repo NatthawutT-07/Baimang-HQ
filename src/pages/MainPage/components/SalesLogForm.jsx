@@ -42,7 +42,8 @@ export default function SalesLogForm() {
       ]);
       const normalEmployees = (empRes.data || []).filter(emp => emp.role !== 'admin' && emp.status === 'active');
       setEmployees(normalEmployees);
-      setBranches(branchRes.data || []);
+      const activeBranches = (branchRes.data || []).filter(b => b.status === 'active');
+      setBranches(activeBranches);
     } catch (error) {
       console.error('Failed to fetch data:', error);
       alert('ไม่สามารถโหลดข้อมูลได้');

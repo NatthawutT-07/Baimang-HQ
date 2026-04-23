@@ -9,7 +9,7 @@ export default function BranchSection() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingBranch, setEditingBranch] = useState(null);
-  const [formData, setFormData] = useState({ branch_code: '', branch_name: '', month: '', day: '', target: '' });
+  const [formData, setFormData] = useState({ branch_code: '', branch_name: '', month: '', day: '', target: '', status: 'active' });
 
   useEffect(() => { fetchBranches(); }, []);
 
@@ -36,18 +36,29 @@ export default function BranchSection() {
 
   const handleEdit = (branch) => {
     setEditingBranch(branch);
-    setFormData({ branch_code: branch.branch_code, branch_name: branch.branch_name, month: branch.month, day: branch.day, target: branch.target });
+    setFormData({ branch_code: branch.branch_code, branch_name: branch.branch_name, month: branch.month, day: branch.day, target: branch.target, status: branch.status || 'active' });
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
     setShowModal(false); setEditingBranch(null);
-    setFormData({ branch_code: '', branch_name: '', month: '', day: '', target: '' });
+    setFormData({ branch_code: '', branch_name: '', month: '', day: '', target: '', status: 'active' });
   };
 
   const filteredBranches = branches.filter(b =>
     b.branch_code.toLowerCase().includes(searchTerm.toLowerCase()) || b.branch_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const toggleBranchStatus = async (branch) => {
+    const newStatus = branch.status === 'active' ? 'inactive' : 'active';
+    try {
+      const r = await branchService.update(branch.id, { status: newStatus });
+      if (r.ok) {
+        toast.success(`เปลี่ยนสถานะเป็น ${newStatus === 'active' ? 'เปิดใช้งาน' : 'ปิดใช้งาน'} สำเร็จ`);
+        setBranches(branches.map(b => b.id === branch.id ? { ...b, status: newStatus } : b));
+      }
+    } catch { toast.error('ไม่สามารถเปลี่ยนสถานะได้'); }
+  };
 
   const inputCls = "w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 bg-white transition-all placeholder:text-slate-400";
 
@@ -87,6 +98,7 @@ export default function BranchSection() {
                 <th className="px-3 py-2 text-center">วัน</th>
                 <th className="px-3 py-2 text-right">เป้าหมาย</th>
                 <th className="px-3 py-2 text-right">เฉลี่ย</th>
+                <th className="px-3 py-2 text-center">สถานะ</th>
                 <th className="px-3 py-2 text-center w-20">จัดการ</th>
               </tr>
             </thead>
@@ -106,10 +118,22 @@ export default function BranchSection() {
                     {(branch.avg_target || (branch.target / branch.day)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </td>
                   <td className="px-3 py-2 text-center">
-                    <button onClick={() => handleEdit(branch)}
-                      className="inline-flex items-center justify-center p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                      <Edit2 className="h-3.5 w-3.5" />
+                    <button
+                      onClick={() => toggleBranchStatus(branch)}
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider transition-all border ${branch.status === 'active'
+                        ? 'bg-emerald-50 text-emerald-600 border-emerald-200/50 hover:bg-emerald-100'
+                        : 'bg-slate-100 text-slate-400 border-slate-200 hover:bg-slate-200'
+                        }`}
+                    >
+                      <div className={`w-1 h-1 rounded-full ${branch.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
+                      {branch.status === 'active' ? 'Active' : 'Inactive'}
                     </button>
+                  </td>
+                  <td className="px-3 py-2 text-center">
+                    <div className="flex items-center justify-center gap-0.5">
+                      <button onClick={() => handleEdit(branch)} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"><Edit2 className="h-3.5 w-3.5" /></button>
+                      <button onClick={() => handleDelete(branch.id)} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"><Trash2 className="h-3.5 w-3.5" /></button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -152,6 +176,13 @@ export default function BranchSection() {
                 <label className="block text-xs font-semibold text-slate-600 mb-1.5">เป้าหมาย</label>
                 <input type="number" step="0.01" value={formData.target} onChange={(e) => setFormData({ ...formData, target: e.target.value })} required className={inputCls} />
                 <p className="mt-1.5 text-[11px] text-slate-400">เป้าหมายเฉลี่ย: {formData.target && formData.day ? (parseFloat(formData.target) / parseInt(formData.day)).toLocaleString(undefined, { maximumFractionDigits: 2 }) : '0'} / วัน</p>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1.5">สถานะการใช้งาน</label>
+                <select value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })} className={`${inputCls} appearance-none`}>
+                  <option value="active">เปิดใช้งาน (Active)</option>
+                  <option value="inactive">ปิดใช้งาน (Inactive)</option>
+                </select>
               </div>
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={handleCloseModal} className="flex-1 px-4 py-2.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition-colors">ยกเลิก</button>
