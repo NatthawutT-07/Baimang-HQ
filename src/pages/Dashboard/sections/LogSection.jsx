@@ -17,7 +17,7 @@ export default function LogSection() {
     try {
       const params = { limit: 10, offset };
       if (actionFilter) params.action = actionFilter;
-      
+
       const currentSearch = searchOverride !== undefined ? searchOverride : searchTerm;
       if (currentSearch) params.search = currentSearch;
 
@@ -87,53 +87,53 @@ export default function LogSection() {
         <div className="overflow-x-auto border border-slate-200/80 rounded-xl">
           <table className="w-full text-left text-sm whitespace-nowrap">
             <thead className="bg-slate-50/80 border-b border-slate-200/80">
-              <tr className="text-[11px] uppercase tracking-wider text-slate-500 font-semibold">
-                <th className="px-4 py-3.5 w-12 text-center">ID</th>
-                <th className="px-4 py-3.5">ประเภท</th>
-                <th className="px-4 py-3.5">พนักงาน</th>
-                <th className="px-4 py-3.5">สาขา</th>
-                <th className="px-4 py-3.5 text-right">รายละเอียด</th>
-                <th className="px-4 py-3.5 text-right">แต้ม</th>
-                <th className="px-4 py-3.5 text-right">วันที่</th>
+              <tr className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
+                <th className="px-3 py-2 w-12 text-center">ID</th>
+                <th className="px-3 py-2">ประเภท</th>
+                <th className="px-3 py-2">พนักงาน</th>
+                <th className="px-3 py-2">สาขา</th>
+                <th className="px-3 py-2 text-right">รายละเอียด</th>
+                <th className="px-3 py-2 text-right">แต้ม</th>
+                <th className="px-3 py-2 text-right">วันที่</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {logs.map((log, index) => (
-                <tr key={log.id} className="hover:bg-blue-50/30 transition-colors">
-                  <td className="px-4 py-3.5 text-center text-slate-400 font-mono text-xs">
+                <tr key={log.id} className="hover:bg-blue-50/30 transition-colors text-[13px]">
+                  <td className="px-3 py-2 text-center text-slate-400 font-mono text-[10px]">
                     {log.id}
                   </td>
-                  <td className="px-4 py-3.5">
-                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${log.action === 'ขาย' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50' : 'bg-blue-50 text-blue-700 border border-blue-200/50'
+                  <td className="px-3 py-2">
+                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${log.action === 'ขาย' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50' : 'bg-blue-50 text-blue-700 border border-blue-200/50'
                       }`}>
                       {log.action === 'ขาย' ? <ArrowUpCircle className="w-3 h-3" /> : <Gift className="w-3 h-3" />}
                       {log.action}
                     </span>
                   </td>
-                  <td className="px-4 py-3.5">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-[11px] text-slate-400 font-mono">{log.employee_code}</span>
+                  <td className="px-3 py-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-slate-400 font-mono">({log.employee_code})</span>
                       <span className="font-medium text-slate-800">{log.employee?.nickname}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3.5">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-[11px] text-slate-400 font-mono">{log.branch_code}</span>
+                  <td className="px-3 py-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-slate-400 font-mono">({log.branch_code})</span>
                       <span className="text-slate-700 font-medium">{log.branch_name}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3.5 text-right text-slate-600">
+                  <td className="px-3 py-2 text-right text-slate-600">
                     {log.action === 'ขาย' && <span>{log.sales?.toLocaleString()} / {log.target?.toLocaleString()} ฿</span>}
                     {log.action === 'แลกรางวัล' && <span>{log.reward}</span>}
                   </td>
-                  <td className="px-4 py-3.5 text-right">
+                  <td className="px-3 py-2 text-right">
                     <span className="font-semibold text-slate-700">{log.point}</span>
                   </td>
-                  <td className="px-4 py-3.5 text-right text-xs">
+                  <td className="px-3 py-2 text-right text-[11px]">
                     {log.action === 'ขาย' ? (
-                      <div className="flex flex-col items-end space-y-0.5">
+                      <div className="flex flex-col items-end space-y-0">
                         <span className="text-slate-600 font-medium">{formatDate(log.date)}</span>
-                        <span className="text-[10px] text-slate-400">บันทึก: {formatDate(log.created_at)}</span>
+                        <span className="text-[9px] text-slate-400">บันทึก: {formatDate(log.created_at)}</span>
                       </div>
                     ) : (
                       <span className="text-slate-500">{formatDate(log.created_at)}</span>
