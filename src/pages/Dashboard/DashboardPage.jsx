@@ -1,17 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Building2, Gift, Users, FileText, Menu, X, LayoutDashboard, ChevronRight, LogOut, Activity } from 'lucide-react';
+import { Building2, Gift, Users, FileText, Menu, X, LayoutDashboard, ChevronRight, LogOut, Activity, Info } from 'lucide-react';
 import { authService } from '../../services/authService';
 import BranchSection from './sections/BranchSection';
 import RewardSection from './sections/RewardSection';
 import EmployeeSection from './sections/EmployeeSection';
 import LogSection from './sections/LogSection';
+import GuideSection from './sections/GuideSection';
 
 const SECTIONS = {
   BRANCHES: 'branches',
   REWARDS: 'rewards',
   EMPLOYEES: 'employees',
   LOGS: 'logs',
+  GUIDE: 'guide',
 };
 
 const sectionMeta = {
@@ -19,6 +21,7 @@ const sectionMeta = {
   [SECTIONS.REWARDS]: { description: '' },
   [SECTIONS.EMPLOYEES]: { description: '' },
   [SECTIONS.LOGS]: { description: '' },
+  [SECTIONS.GUIDE]: { description: '' },
 };
 
 export default function DashboardPage() {
@@ -36,6 +39,7 @@ export default function DashboardPage() {
     { id: SECTIONS.REWARDS, label: 'Rewards', sublabel: 'รางวัล', icon: Gift, accent: 'from-amber-500 to-orange-500' },
     { id: SECTIONS.EMPLOYEES, label: 'Employees', sublabel: 'พนักงาน', icon: Users, accent: 'from-violet-500 to-purple-600' },
     { id: SECTIONS.LOGS, label: 'Logs', sublabel: 'บันทึกระบบ', icon: FileText, accent: 'from-emerald-500 to-teal-600' },
+    { id: SECTIONS.GUIDE, label: 'Guide', sublabel: 'คำแนะนำการใช้งาน', icon: Info, accent: 'from-blue-500 to-indigo-600' },
   ];
 
   const renderSection = () => {
@@ -44,6 +48,7 @@ export default function DashboardPage() {
       case SECTIONS.REWARDS: return <RewardSection />;
       case SECTIONS.EMPLOYEES: return <EmployeeSection />;
       case SECTIONS.LOGS: return <LogSection />;
+      case SECTIONS.GUIDE: return <GuideSection />;
       default: return <BranchSection />;
     }
   };

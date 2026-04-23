@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Save, TrendingUp, CheckCircle2, XCircle, Star, PartyPopper } from 'lucide-react';
+import { X, Save, TrendingUp, CheckCircle2, XCircle, Star, PartyPopper, User, Store, Calendar, Clock, Banknote, ChevronDown } from 'lucide-react';
 import { employeeService } from '../../../services/employeeService';
 import { branchService } from '../../../services/branchService';
 import { logService } from '../../../services/logService';
@@ -61,6 +61,13 @@ export default function SalesLogForm() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === 'sales') {
+      // Limit to 6 digits and 2 decimal places
+      const regex = /^\d{0,6}(\.\d{0,2})?$/;
+      if (value !== '' && !regex.test(value)) return;
+    }
+
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
@@ -146,71 +153,97 @@ export default function SalesLogForm() {
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden border border-emerald-100">
-            <div className="flex items-center justify-between px-6 py-4 border-b bg-emerald-50/60">
-              <h2 className="text-xl font-bold text-gray-800">ฟอร์มบันทึกยอดขาย</h2>
+            <div className="flex items-center justify-between px-5 py-3 border-b bg-emerald-50/60">
+              <h2 className="text-lg font-bold text-gray-800">ฟอร์มบันทึกยอดขาย</h2>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-emerald-100 rounded-full transition-colors"
+                className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-emerald-100 rounded-full transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <div className="p-6">
+            <div className="p-4 sm:p-5">
               {/* ---- Result Screen ---- */}
               {submitResult ? (
-                <div className="text-center py-4">
+                <div className="text-center py-2">
                   {submitResult.type === 'success' ? (
-                    <>
-                      {/* Animated icon */}
-                      <div className="relative mx-auto w-20 h-20 mb-5">
-                        <div className={`absolute inset-0 rounded-full ${submitResult.point > 0 ? 'bg-emerald-100' : 'bg-amber-100'} animate-ping opacity-30`} />
-                        <div className={`relative w-20 h-20 rounded-full ${submitResult.point > 0 ? 'bg-gradient-to-br from-emerald-400 to-emerald-600' : 'bg-gradient-to-br from-amber-400 to-amber-500'} flex items-center justify-center shadow-lg`}>
-                          {submitResult.point > 0
-                            ? <CheckCircle2 className="w-10 h-10 text-white" />
-                            : <Star className="w-10 h-10 text-white" />}
-                        </div>
+                    <div className="flex flex-col items-center animate-in fade-in zoom-in duration-500">
+
+
+                      <h3 className="text-xl font-black text-gray-900 mb-0.5 tracking-tight">
+                        บันทึกสำเร็จ!
+                      </h3>
+
+                      <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 px-3 py-1.5 sm:py-1 bg-emerald-50 border border-emerald-100 rounded-xl sm:rounded-full text-[10px] font-bold text-emerald-800 uppercase tracking-wider mb-4 shadow-sm">
+                        <span>{submitResult.empName}</span>
+                        <span className="hidden sm:inline-block w-1 h-1 bg-emerald-300 rounded-full"></span>
+                        <span>{submitResult.branchName}</span>
                       </div>
 
-                      <h3 className="text-xl font-bold text-gray-900 mb-1">บันทึกสำเร็จ!</h3>
-                      <p className="text-sm text-gray-500 mb-5">{submitResult.empName} • {submitResult.branchName}</p>
+                      {/* Premium Result Card */}
+                      <div className="w-full bg-white border border-gray-100 rounded-[1.5rem] p-4 sm:p-5 shadow-xl shadow-emerald-900/5 mb-4 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-20 h-20 bg-emerald-50 rounded-full -mr-10 -mt-10 opacity-50"></div>
 
-                      {/* Point result card */}
-                      <div className={`rounded-2xl p-4 mb-5 border ${submitResult.point > 0 ? 'bg-emerald-50 border-emerald-200' : 'bg-amber-50 border-amber-200'}`}>
-                        <p className="text-xs text-gray-500 mb-1">ยอดขาย / เป้าหมาย</p>
-                        <p className="text-lg font-bold text-gray-800 mb-2">
-                          {submitResult.sales?.toLocaleString()} / {submitResult.target?.toLocaleString()} ฿
-                        </p>
-                        <div className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-bold ${submitResult.point > 0 ? 'bg-emerald-600 text-white' : 'bg-amber-500 text-white'}`}>
-                          {submitResult.point > 0 ? (
-                            <><Star className="w-4 h-4" /> ได้รับ 1 คะแนน</>
-                          ) : (
-                            'ยอดขายไม่ถึงเป้า (0 คะแนน)'
-                          )}
+                        <div className="relative z-10">
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2.5">ยอดขายที่บันทึก</p>
+
+                          <div className="flex items-baseline justify-center gap-1.5 mb-4">
+                            <span className="text-3xl font-black text-gray-900 leading-none tracking-tighter">
+                              {submitResult.sales?.toLocaleString()}
+                            </span>
+                            <span className="text-lg font-bold text-emerald-600">฿</span>
+                          </div>
+
+                          <div className={`flex items-center justify-center gap-2.5 py-3 px-5 rounded-xl border-2 transition-all ${submitResult.point > 0
+                            ? 'bg-emerald-600 border-emerald-500 shadow-lg shadow-emerald-200'
+                            : 'bg-slate-50 border-slate-100'
+                            }`}>
+                            {submitResult.point > 0 ? (
+                              <>
+                                <div className="bg-white/20 p-1 rounded-lg">
+                                  <Star className="w-5 h-5 text-yellow-300 fill-yellow-300" />
+                                </div>
+                                <div className="text-left">
+                                  <p className="text-white text-sm font-black leading-none">ได้รับ 1 คะแนน</p>
+                                  <p className="text-emerald-100 text-[9px] font-bold mt-0.5 uppercase tracking-wider">สะสมแต้มสำเร็จ</p>
+                                </div>
+                              </>
+                            ) : (
+                              <div className="text-center py-0.5">
+                                <p className="text-slate-600 text-[13px] font-black uppercase tracking-wide">วันนี้ยังไม่ได้รับคะแนนน้า</p>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
 
                       <button
                         onClick={() => { setSubmitResult(null); setIsOpen(false); }}
-                        className="w-full bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-3 rounded-xl font-semibold transition-colors shadow-md shadow-emerald-600/20"
+                        className="w-full bg-gray-900 hover:bg-black text-white py-3.5 rounded-xl font-bold transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-gray-200 text-sm"
                       >
                         ปิดหน้าต่าง
                       </button>
-                    </>
+                    </div>
                   ) : (
-                    <>
-                      <div className="mx-auto w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-4">
-                        <XCircle className="w-9 h-9 text-red-500" />
+                    <div className="flex flex-col items-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+                      <div className="bg-rose-50 p-5 rounded-3xl mb-5 relative">
+                        <XCircle className="w-12 h-12 text-rose-500" />
+                        <div className="absolute -inset-1 bg-rose-500 rounded-3xl animate-ping opacity-10"></div>
                       </div>
-                      <h3 className="text-lg font-bold text-gray-900 mb-1">เกิดข้อผิดพลาด</h3>
-                      <p className="text-sm text-gray-500 mb-5">{submitResult.message}</p>
+
+                      <h3 className="text-xl font-black text-gray-900 mb-2">เกิดข้อผิดพลาด</h3>
+                      <p className="text-gray-500 mb-6 max-w-[260px] mx-auto text-xs leading-relaxed font-medium">
+                        {submitResult.message || 'ขออภัย ระบบขัดข้องชั่วคราว กรุณาลองใหม่อีกครั้ง'}
+                      </p>
+
                       <button
-                        onClick={() => setSubmitResult(null)}
-                        className="w-full bg-gray-800 hover:bg-gray-700 text-white px-4 py-3 rounded-xl font-semibold transition-colors"
+                        onClick={() => { setSubmitResult(null); setIsOpen(false); }}
+                        className="w-full bg-gray-100 hover:bg-gray-200 text-gray-500 py-3.5 rounded-xl font-bold transition-all text-sm"
                       >
-                        ลองอีกครั้ง
+                        ปิด
                       </button>
-                    </>
+                    </div>
                   )}
                 </div>
               ) : loading ? (
@@ -218,118 +251,131 @@ export default function SalesLogForm() {
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      พนักงาน
-                    </label>
-                    <select
-                      name="employee_code"
-                      value={formData.employee_code}
-                      onChange={handleChange}
-                      className="w-full border-emerald-200 rounded-lg shadow-sm focus:border-emerald-400 focus:ring-emerald-200 bg-white px-4 py-2 border"
-                      required
-                    >
-                      <option value="">-- เลือกพนักงาน --</option>
-                      {employees.map(emp => (
-                        <option key={emp.employee_code} value={emp.employee_code}>
-                          {emp.employee_code} - {emp.nickname}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      สาขา
-                    </label>
-                    <select
-                      name="branch_code"
-                      value={formData.branch_code}
-                      onChange={handleChange}
-                      className="w-full border-emerald-200 rounded-lg shadow-sm focus:border-emerald-400 focus:ring-emerald-200 bg-white px-4 py-2 border"
-                      required
-                    >
-                      <option value="">-- เลือกสาขา --</option>
-                      {branches.map(b => (
-                        <option key={b.branch_code} value={b.branch_code}>
-                          {b.branch_code} - {b.branch_name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        วันที่
+                <form onSubmit={handleSubmit} className="space-y-3">
+                  <div className="space-y-2.5">
+                    {/* Employee Field */}
+                    <div className="group">
+                      <label className="flex items-center gap-1.5 text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 ml-1 group-focus-within:text-emerald-600 transition-colors">
+                        <User className="w-3 h-3" />
+                        พนักงาน
                       </label>
-                      <input
-                        type="date"
-                        name="date"
-                        // min={MIN_DATE}
-                        // max={getThaiNow().toISOString().slice(0, 10)}
-                        value={formData.date}
-                        onChange={handleChange}
-                        className="w-full border-emerald-200 rounded-lg shadow-sm focus:border-emerald-400 focus:ring-emerald-200 px-4 py-2 border"
-                        required
-                      />
+                      <div className="relative">
+                        <select
+                          name="employee_code"
+                          value={formData.employee_code}
+                          onChange={handleChange}
+                          className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-3 py-2.5 focus:bg-white focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/10 transition-all appearance-none cursor-pointer text-gray-700 text-sm font-medium"
+                          required
+                        >
+                          <option value="">-- เลือกพนักงาน --</option>
+                          {employees.map(emp => (
+                            <option key={emp.employee_code} value={emp.employee_code}>
+                              ({emp.employee_code}) {emp.nickname}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                          <ChevronDown className="w-3.5 h-3.5" />
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        เวลา
+
+                    {/* Branch Field */}
+                    <div className="group">
+                      <label className="flex items-center gap-1.5 text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 ml-1 group-focus-within:text-emerald-600 transition-colors">
+                        <Store className="w-3 h-3" />
+                        สาขา
                       </label>
-                      <input
-                        type="text"
-                        value={currentTime + " น."}
-                        readOnly
-                        className="w-full border-gray-200 rounded-lg shadow-sm bg-gray-50 text-gray-500 px-4 py-2 border cursor-not-allowed text-center font-medium"
-                      />
+                      <div className="relative">
+                        <select
+                          name="branch_code"
+                          value={formData.branch_code}
+                          onChange={handleChange}
+                          className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-3 py-2.5 focus:bg-white focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/10 transition-all appearance-none cursor-pointer text-gray-700 text-sm font-medium"
+                          required
+                        >
+                          <option value="">-- เลือกสาขา --</option>
+                          {branches.map(b => (
+                            <option key={b.branch_code} value={b.branch_code}>
+                              {b.branch_name}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                          <ChevronDown className="w-3.5 h-3.5" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Date & Time Grid */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="group">
+                        <label className="flex items-center gap-1.5 text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 ml-1 group-focus-within:text-emerald-600 transition-colors">
+                          <Calendar className="w-3 h-3" />
+                          วันที่
+                        </label>
+                        <input
+                          type="date"
+                          name="date"
+                          value={formData.date}
+                          onChange={handleChange}
+                          className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-3 py-2.5 focus:bg-white focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/10 transition-all text-gray-700 text-sm font-medium"
+                          required
+                        />
+                      </div>
+                      <div className="group">
+                        <label className="flex items-center gap-1.5 text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 ml-1">
+                          <Clock className="w-3 h-3" />
+                          เวลา
+                        </label>
+                        <div className="w-full bg-gray-100 border border-gray-100 rounded-xl px-3 py-2.5 text-gray-500 font-bold text-center text-sm">
+                          {currentTime}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Sales Field */}
+                    <div className="group pt-1">
+                      <label className="flex items-center gap-1.5 text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 ml-1 group-focus-within:text-emerald-600 transition-colors">
+                        <Banknote className="w-3 h-3" />
+                        ยอดขาย
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="number"
+                          step="0.01"
+                          max="999999.99"
+                          name="sales"
+                          value={formData.sales}
+                          onChange={handleChange}
+                          className="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 pr-10 focus:bg-white focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/10 transition-all text-xl font-black text-gray-800 placeholder:text-gray-300"
+                          placeholder="0.00"
+                          required
+                        />
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">
+                          บาท
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  {/* 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      การกระทำ
-                    </label>
-                    <input
-                      type="text"
-                      value="ขาย"
-                      readOnly
-                      className="w-full border-gray-200 rounded-lg shadow-sm bg-gray-100 text-gray-500 px-4 py-2 border cursor-not-allowed"
-                    />
-                  </div> */}
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      ยอดขาย
-                    </label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      name="sales"
-                      value={formData.sales}
-                      onChange={handleChange}
-                      className="w-full border-emerald-200 rounded-lg shadow-sm focus:border-emerald-400 focus:ring-emerald-200 px-4 py-2 border"
-                      placeholder="0.00"
-                      required
-                    />
-                  </div>
-
-                  <div className="pt-4">
+                  <div className="pt-2">
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="w-full flex justify-center items-center space-x-2 py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 transition"
+                      className="group relative w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-emerald-200 active:scale-[0.98] overflow-hidden text-sm"
                     >
-                      {submitting ? (
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      ) : (
-                        <>
-                          <Save className="h-5 w-5" />
-                          <span>บันทึกข้อมูล</span>
-                        </>
-                      )}
+                      <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <div className="relative flex justify-center items-center gap-2">
+                        {submitting ? (
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        ) : (
+                          <>
+                            <Save className="w-4 h-4" />
+                            <span>บันทึกยอดขาย</span>
+                          </>
+                        )}
+                      </div>
                     </button>
                   </div>
                 </form>

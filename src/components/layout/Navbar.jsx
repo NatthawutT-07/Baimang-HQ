@@ -19,17 +19,31 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-emerald-600 shadow-lg relative z-40">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-14 sm:h-16">
+    <nav className="bg-gradient-to-r from-emerald-600 to-emerald-500 shadow-lg relative z-40">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16 sm:h-20">
           <div
-            className="flex items-center space-x-2 sm:space-x-3 cursor-pointer"
+            className="flex items-center gap-3 sm:gap-4 cursor-pointer group transition-all duration-300 active:scale-95"
             onClick={() => navigate('/')}
           >
-            <img src="/images/favicon.png" alt="Logo" className="h-6 w-6 sm:h-8 sm:w-8" />
-            <span className="text-white text-base sm:text-lg font-bold">Baimiang Healthy Shop</span>
+            <div className="relative">
+              <div className="absolute -inset-1.5 bg-white/30 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <img
+                src="/images/favicon.png"
+                alt="Logo"
+                className="relative h-8 w-8 sm:h-10 sm:w-10 drop-shadow-lg transition-transform duration-500 group-hover:rotate-[360deg] group-hover:scale-110"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-white text-base sm:text-xl font-black tracking-tight leading-tight drop-shadow-md">
+                BAIMIANG
+              </span>
+              <span className="text-emerald-50 text-[9px] sm:text-[11px] font-bold uppercase tracking-[0.2em] -mt-0.5 opacity-80 group-hover:opacity-100 transition-opacity">
+                Healthy Shop
+              </span>
+            </div>
           </div>
-          <div className="flex items-center space-x-2 sm:space-x-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <SalesLogForm />
           </div>
           {/* 

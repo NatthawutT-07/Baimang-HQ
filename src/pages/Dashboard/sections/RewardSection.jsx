@@ -9,7 +9,7 @@ export default function RewardSection() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingReward, setEditingReward] = useState(null);
-  const [formData, setFormData] = useState({ title: '', point_reward: '', image: null });
+  const [formData, setFormData] = useState({ title: '', point_reward: '' });
 
   useEffect(() => { fetchRewards(); }, []);
 
@@ -22,18 +22,16 @@ export default function RewardSection() {
   const handleSubmit = async (e) => {
     e.preventDefault(); setLoading(true);
     try {
-      const data = new FormData();
-      data.append('title', formData.title);
-      data.append('point_reward', formData.point_reward);
-      if (formData.image) {
-        data.append('image', formData.image);
-      }
+      const payload = {
+        title: formData.title,
+        point_reward: formData.point_reward
+      };
 
       if (editingReward) {
-        const r = await rewardService.update(editingReward.id, data);
+        const r = await rewardService.update(editingReward.id, payload);
         if (r.ok) toast.success('แก้ไขข้อมูลรางวัลสำเร็จ');
       } else {
-        const r = await rewardService.create(data);
+        const r = await rewardService.create(payload);
         if (r.ok) toast.success('เพิ่มรางวัลสำเร็จ');
       }
       fetchRewards(); handleCloseModal();
@@ -46,8 +44,8 @@ export default function RewardSection() {
     catch { toast.error('ไม่สามารถลบรางวัลได้'); }
   };
 
-  const handleEdit = (rw) => { setEditingReward(rw); setFormData({ title: rw.title, point_reward: rw.point_reward, image: null }); setShowModal(true); };
-  const handleCloseModal = () => { setShowModal(false); setEditingReward(null); setFormData({ title: '', point_reward: '', image: null }); };
+  const handleEdit = (rw) => { setEditingReward(rw); setFormData({ title: rw.title, point_reward: rw.point_reward }); setShowModal(true); };
+  const handleCloseModal = () => { setShowModal(false); setEditingReward(null); setFormData({ title: '', point_reward: '' }); };
   const filteredRewards = rewards.filter(r => r.title.toLowerCase().includes(searchTerm.toLowerCase()));
   const inputCls = "w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 bg-white transition-all placeholder:text-slate-400";
 
@@ -133,13 +131,7 @@ export default function RewardSection() {
                 <label className="block text-xs font-semibold text-slate-600 mb-1.5">ชื่อรางวัล</label>
                 <input type="text" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} required className={inputCls} />
               </div>
-              {/* <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1.5">รูปภาพคูปอง/รางวัล</label>
-                <input type="file" accept="image/*" onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })} className={inputCls} />
-                {editingReward && editingReward.image_url && !formData.image && (
-                  <p className="text-xs text-slate-400 mt-1.5">มีรูปภาพอยู่แล้ว หากไม่ต้องการเปลี่ยนไม่ต้องอัปโหลดใหม่</p>
-                )}
-              </div> */}
+
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1.5">จำนวนแต้ม</label>
                 <input type="number" min="0" value={formData.point_reward} onChange={(e) => setFormData({ ...formData, point_reward: e.target.value })} required className={inputCls} />

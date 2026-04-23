@@ -31,6 +31,10 @@ export const employeeService = {
     return response.data;
   },
 
+  resetAllPoints: async () => {
+    const response = await api.post('/hq/employees/reset-all-points');
+    return response.data;
+  },
   update: async (id, data) => {
     const response = await api.put(`/hq/employees/${id}`, data);
     return response.data;

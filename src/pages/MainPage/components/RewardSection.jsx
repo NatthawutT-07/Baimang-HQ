@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Gift, X, CheckCircle2, UserCircle2 } from 'lucide-react';
+import { Gift, X, CheckCircle2, UserCircle2, Star } from 'lucide-react';
 import { rewardService } from '../../../services/rewardService';
 import { employeeService } from '../../../services/employeeService';
 import { logService } from '../../../services/logService';
@@ -137,35 +137,32 @@ export default function RewardSection() {
 
         {/* Content */}
         <div className="p-3 sm:p-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 gap-4 sm:gap-6">
             {rewards.map((reward, index) => (
-              <div key={reward.id} className="bg-white border border-emerald-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group flex flex-row h-auto sm:h-36">
-                <div className="absolute top-0 right-0 bg-emerald-600 text-white px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-bl-xl text-xs sm:text-sm font-bold shadow-sm z-10">
-                  {reward.point_reward} แต้ม
-                </div>
+              <div key={reward.id} className="bg-white border border-emerald-100 rounded-2xl shadow-sm hover:shadow-md transition-all relative overflow-hidden group flex flex-col">
 
                 {/* Image Area */}
-                <div className="w-2/5 sm:w-1/3 overflow-hidden bg-slate-50 flex items-center justify-center shrink-0 border-r border-emerald-50">
+                <div className="relative w-full aspect-[2/1] bg-white flex items-center justify-center px-4 pt-3 pb-0">
                   <img
-                    src={reward.image_url
-                      ? `${import.meta.env.VITE_API_URL}${reward.image_url}`
-                      : `/images/coupon${(index % 3) + 1}.png`
-                    }
+                    src={`/images/coupon${(index % 3) + 1}.png`}
                     alt={reward.title}
-                    className="w-full h-28 sm:h-full object-contain group-hover:scale-105 transition-transform duration-300 p-2"
-                    onError={(e) => {
-                      // Fallback to sequential coupon if backend image fails
-                      e.target.src = `/images/coupon${(index % 3) + 1}.png`;
-                    }}
+                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                   />
+
+                  {/* Point Badge - Top Right */}
+                  <div className="absolute top-0 right-0 bg-[#008d5e] text-white px-5 py-2 rounded-bl-[1.5rem] text-lg sm:text-xl font-bold shadow-sm z-10 flex items-center gap-1.5">
+                    {reward.point_reward} <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+                  </div>
                 </div>
 
-                {/* Text & Button */}
-                <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between min-w-0">
-                  <h3 className="font-bold text-sm sm:text-base text-gray-800 mb-2 line-clamp-2 pr-12">{reward.title}</h3>
+                {/* Footer Content */}
+                <div className="px-4 pt-0 pb-4 flex items-center justify-between gap-3 bg-white">
+                  <h3 className="font-bold text-sm sm:text-base md:text-m text-gray-800 flex-1">
+                    {reward.title}
+                  </h3>
                   <button
                     onClick={() => handleOpenRedeem(reward)}
-                    className="w-full bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200 hover:border-emerald-600 py-1.5 sm:py-2 rounded-xl transition-colors font-medium text-xs sm:text-sm mt-auto"
+                    className="shrink-0 bg-[#eefdf5] hover:bg-[#008d5e] text-[#008d5e] hover:text-white border border-[#008d5e]/20 py-2.5 px-6 rounded-lg transition-all font-medium text-sm sm:text-base"
                   >
                     แลกรางวัลนี้
                   </button>

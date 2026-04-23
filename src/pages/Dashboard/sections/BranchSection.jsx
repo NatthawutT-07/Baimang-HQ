@@ -87,6 +87,7 @@ export default function BranchSection() {
                 <th className="px-4 py-3.5">เดือน</th>
                 <th className="px-4 py-3.5">วัน</th>
                 <th className="px-4 py-3.5">เป้าหมาย</th>
+                <th className="px-4 py-3.5">เฉลี่ย</th>
                 <th className="px-4 py-3.5 text-center w-24">จัดการ</th>
               </tr>
             </thead>
@@ -100,6 +101,9 @@ export default function BranchSection() {
                   <td className="px-4 py-3.5 text-slate-600">{branch.month}</td>
                   <td className="px-4 py-3.5 text-slate-600">{branch.day}</td>
                   <td className="px-4 py-3.5 font-semibold text-slate-700">{branch.target.toLocaleString()}</td>
+                  <td className="px-4 py-3.5 font-bold text-blue-600">
+                    {(branch.avg_target || (branch.target / branch.day)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </td>
                   <td className="px-4 py-3.5 text-center">
                     <button onClick={() => handleEdit(branch)}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg text-blue-600 hover:bg-blue-50 hover:text-blue-700 transition-colors">
@@ -146,7 +150,7 @@ export default function BranchSection() {
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1.5">เป้าหมาย</label>
                 <input type="number" step="0.01" value={formData.target} onChange={(e) => setFormData({ ...formData, target: e.target.value })} required className={inputCls} />
-                <p className="mt-1.5 text-[11px] text-slate-400">เป้าหมายเฉลี่ย: {formData.target && formData.day ? (parseFloat(formData.target) / parseInt(formData.day)).toLocaleString(undefined, {maximumFractionDigits: 2}) : '0'} / วัน</p>
+                <p className="mt-1.5 text-[11px] text-slate-400">เป้าหมายเฉลี่ย: {formData.target && formData.day ? (parseFloat(formData.target) / parseInt(formData.day)).toLocaleString(undefined, { maximumFractionDigits: 2 }) : '0'} / วัน</p>
               </div>
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={handleCloseModal} className="flex-1 px-4 py-2.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition-colors">ยกเลิก</button>

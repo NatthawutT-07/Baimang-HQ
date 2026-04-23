@@ -7,6 +7,7 @@ export default function PointChecker() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
+  const [lastCheckedCode, setLastCheckedCode] = useState('');
 
   const handleCheck = async (e) => {
     e.preventDefault();
@@ -17,8 +18,10 @@ export default function PointChecker() {
     setResult(null);
 
     try {
-      const res = await employeeService.getByCode(employeeCode.trim());
+      const trimmedCode = employeeCode.trim();
+      const res = await employeeService.getByCode(trimmedCode);
       if (res.data) {
+        setLastCheckedCode(trimmedCode);
         // point_redeemed is the usable balance
         const availablePoints = res.data.point_redeemed || 0;
         const totalEarned = res.data.point_earned || 0;
@@ -57,13 +60,14 @@ export default function PointChecker() {
               value={employeeCode}
               onChange={(e) => setEmployeeCode(e.target.value)}
               placeholder="รหัสพนักงาน..."
+              maxLength={5}
               className="block w-full pl-10 pr-3 py-3 border border-emerald-200 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400 text-sm sm:text-lg transition-colors"
             />
           </div>
           <button
             type="submit"
-            disabled={!employeeCode.trim() || loading}
-            className="flex items-center justify-center space-x-2 bg-emerald-600 text-white px-4 sm:px-8 py-3 rounded-xl hover:bg-emerald-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm sm:text-lg shadow-sm whitespace-nowrap"
+            disabled={employeeCode.trim().length !== 5 || loading || (result && employeeCode.trim() === lastCheckedCode)}
+            className="flex items-center justify-center space-x-2 bg-emerald-600 text-white px-4 sm:px-8 py-3 rounded-xl hover:bg-emerald-500 transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-medium text-sm sm:text-lg shadow-sm whitespace-nowrap"
           >
             {loading ? (
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
@@ -80,33 +84,24 @@ export default function PointChecker() {
         )}
 
         {result && (
-          <div className="bg-emerald-50/60 rounded-xl border border-emerald-100 p-4 sm:p-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-emerald-200 pb-4">
-              <div className="flex items-center space-x-3">
-                <div className="bg-white p-2 rounded-full shadow-sm">
-                  <UserCircle2 className="h-6 w-6 sm:h-8 sm:w-8 text-emerald-600" />
+          <div className="bg-emerald-50/60 rounded-xl border border-emerald-100 p-3 sm:p-6">
+            <div className="flex flex-row items-center justify-between gap-1 sm:gap-3 border-b border-emerald-200 pb-3 sm:pb-4">
+              <div className="flex items-center space-x-1.5 sm:space-x-3 min-w-0">
+                <div className="bg-white p-1 sm:p-2 rounded-full shadow-sm flex-shrink-0">
+                  <UserCircle2 className="h-5 w-5 sm:h-8 sm:w-8 text-emerald-600" />
                 </div>
-                <div>
-                  <div className="text-xs sm:text-sm text-emerald-600 font-medium">รหัส: {result.employee_code}</div>
-                  <div className="text-base sm:text-lg font-bold text-gray-800">{result.nickname}</div>
+                <div className="min-w-0">
+                  <div className="text-[10px] sm:text-sm text-emerald-600 font-medium leading-tight whitespace-nowrap">รหัส: {result.employee_code}</div>
+                  <div className="text-[13px] sm:text-lg font-bold text-gray-800 leading-tight whitespace-nowrap overflow-visible">{result.nickname}</div>
                 </div>
               </div>
-              <div className="text-left sm:text-right bg-white/80 sm:bg-transparent rounded-lg p-2 sm:p-0">
-                <div className="text-xs sm:text-sm text-emerald-600 font-medium">คะแนนที่ใช้แลกได้จริง</div>
-                <div className="text-3xl sm:text-4xl font-black text-emerald-600">{result.availablePoints} <span className="text-sm sm:text-lg font-medium text-emerald-700">แต้ม</span></div>
+              <div className="text-right flex-shrink-0 ml-1">
+                <div className="text-[10px] sm:text-sm text-emerald-600 font-medium leading-tight whitespace-nowrap">คะแนนที่ใช้แลกได้จริง</div>
+                <div className="text-xl sm:text-4xl font-black text-emerald-600 leading-none mt-0.5 whitespace-nowrap">
+                  {result.availablePoints} <span className="text-[10px] sm:text-lg font-medium text-emerald-700">แต้ม</span>
+                </div>
               </div>
             </div>
-
-            {/* <div className="grid grid-cols-2 gap-3 sm:gap-4 text-center">
-              <div className="bg-white rounded-lg p-2.5 sm:p-3 shadow-sm border border-emerald-50">
-                <div className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wider mb-1">คะแนนที่ได้รับทั้งหมด</div>
-                <div className="text-lg sm:text-xl font-bold text-gray-700">{result.point_earned || 0}</div>
-              </div>
-              <div className="bg-white rounded-lg p-2.5 sm:p-3 shadow-sm border border-emerald-50">
-                <div className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wider mb-1">คะแนนที่ใช้ไปแล้ว</div>
-                <div className="text-lg sm:text-xl font-bold text-gray-700">{result.pointsUsed}</div>
-              </div>
-            </div> */}
           </div>
         )}
       </div>
