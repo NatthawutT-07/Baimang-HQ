@@ -10,7 +10,7 @@ export default function Scoreboard() {
 
   const fetchData = async () => {
     try {
-      const res = await employeeService.getAll();
+      const res = await employeeService.getAll({ limit: 1000 });
       const normalEmployees = (res.data || [])
         .filter(emp => emp.role !== 'admin' && emp.status === 'active')
         .sort((a, b) => (b.point_earned || 0) - (a.point_earned || 0));

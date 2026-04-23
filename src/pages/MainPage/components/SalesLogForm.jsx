@@ -37,7 +37,7 @@ export default function SalesLogForm() {
     setLoading(true);
     try {
       const [empRes, branchRes] = await Promise.all([
-        employeeService.getAll(),
+        employeeService.getAll({ limit: 1000 }),
         branchService.getAll()
       ]);
       const normalEmployees = (empRes.data || []).filter(emp => emp.role !== 'admin' && emp.status === 'active');
@@ -69,7 +69,19 @@ export default function SalesLogForm() {
       if (value !== '' && !regex.test(value)) return;
     }
 
+    if (name === 'employee_code') {
+      // Only digits, max 5
+      const regex = /^\d{0,5}$/;
+      if (value !== '' && !regex.test(value)) return;
+    }
+
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const getFoundEmployeeName = () => {
+    if (!formData.employee_code || formData.employee_code.length < 5) return null;
+    const emp = employees.find(e => e.employee_code === formData.employee_code);
+    return emp ? emp.nickname : 'ไม่พบข้อมูลพนักงาน';
   };
 
   const handleSubmit = async (e) => {
@@ -153,18 +165,21 @@ export default function SalesLogForm() {
 
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden border border-emerald-100">
-            <div className="flex items-center justify-between px-5 py-3 border-b bg-emerald-50/60">
-              <h2 className="text-lg font-bold text-gray-800">ฟอร์มบันทึกยอดขาย</h2>
+          <div className="bg-white rounded-2xl shadow-xl w-full sm:max-w-md border border-emerald-100 flex flex-col max-h-[90vh]">
+            <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b bg-gradient-to-r from-amber-50 to-emerald-50 flex-shrink-0">
+              <div className="flex items-center space-x-2">
+                <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-600" />
+                <h2 className="text-base sm:text-xl font-bold text-gray-800">ฟอร์มบันทึกยอดขาย</h2>
+              </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-emerald-100 rounded-full transition-colors"
+                className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-emerald-100/50 rounded-full transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <div className="p-4 sm:p-5">
+            <div className="p-4 sm:p-5 overflow-y-auto flex-1">
               {/* ---- Result Screen ---- */}
               {submitResult ? (
                 <div className="text-center py-2">
@@ -261,23 +276,21 @@ export default function SalesLogForm() {
                         พนักงาน
                       </label>
                       <div className="relative">
-                        <select
+                        <input
+                          type="text"
                           name="employee_code"
                           value={formData.employee_code}
                           onChange={handleChange}
-                          className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-3 py-2.5 focus:bg-white focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/10 transition-all appearance-none cursor-pointer text-gray-700 text-sm font-medium"
+                          placeholder="กรอกรหัสพนักงาน 5 หลัก"
+                          className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-4 py-2.5 focus:bg-white focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/10 transition-all text-gray-700 text-sm font-medium tracking-wider"
+                          maxLength={5}
                           required
-                        >
-                          <option value="">-- เลือกพนักงาน --</option>
-                          {employees.map(emp => (
-                            <option key={emp.employee_code} value={emp.employee_code}>
-                              ({emp.employee_code}) {emp.nickname}
-                            </option>
-                          ))}
-                        </select>
-                        <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                          <ChevronDown className="w-3.5 h-3.5" />
-                        </div>
+                        />
+                        {getFoundEmployeeName() && (
+                          <div className={`absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold px-2 py-1 rounded-lg ${getFoundEmployeeName() === 'ไม่พบข้อมูลพนักงาน' ? 'text-rose-500 bg-rose-50' : 'text-emerald-600 bg-emerald-50'}`}>
+                            {getFoundEmployeeName()}
+                          </div>
+                        )}
                       </div>
                     </div>
 

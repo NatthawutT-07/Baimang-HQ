@@ -148,12 +148,12 @@ export default function BranchSection() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={handleCloseModal}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md animate-[modalIn_0.2s_ease-out] border border-slate-100" onClick={(e) => e.stopPropagation()}>
-            <div className="px-6 py-5 border-b border-slate-100">
+          <div className="bg-white rounded-2xl shadow-2xl w-full sm:max-w-md animate-[modalIn_0.2s_ease-out] border border-slate-100 flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+            <div className="px-6 py-5 border-b border-slate-100 flex-shrink-0">
               <h3 className="text-base font-bold text-slate-800 !m-0">{editingBranch ? 'แก้ไขสาขา' : 'เพิ่มสาขาใหม่'}</h3>
               <p className="text-xs text-slate-500 mt-1">{editingBranch ? 'แก้ไขข้อมูลสาขาที่เลือก' : 'กรอกข้อมูลสาขาที่ต้องการเพิ่ม'}</p>
             </div>
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto flex-1">
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1.5">รหัสสาขา</label>
                 <input type="text" value={formData.branch_code} onChange={(e) => setFormData({ ...formData, branch_code: e.target.value })} required className={inputCls} />
