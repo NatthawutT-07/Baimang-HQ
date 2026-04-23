@@ -21,6 +21,10 @@ export default function PointChecker() {
       const trimmedCode = employeeCode.trim();
       const res = await employeeService.getByCode(trimmedCode);
       if (res.data) {
+        if (res.data.status === 'inactive') {
+          setError('รหัสพนักงานนี้ถูกระงับการใช้งาน');
+          return;
+        }
         setLastCheckedCode(trimmedCode);
         // point_redeemed is the usable balance
         const availablePoints = res.data.point_redeemed || 0;

@@ -8,7 +8,8 @@ export default function EmployeeSection() {
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({ employee_code: '', nickname: '', position: '', organizational_unit: '', role: 'user', password: '' });
+  const [editingEmployee, setEditingEmployee] = useState(null);
+  const [formData, setFormData] = useState({ employee_code: '', nickname: '', position: '', organizational_unit: '', role: 'user', password: '', status: 'active' });
   const [pagination, setPagination] = useState({ total: 0, limit: 10, offset: 0 });
   const [pointSearchCode, setPointSearchCode] = useState('');
   const [targetEmployee, setTargetEmployee] = useState(null);
@@ -47,13 +48,21 @@ export default function EmployeeSection() {
 
   const handleEdit = (emp) => {
     setEditingEmployee(emp);
-    setFormData({ employee_code: emp.employee_code, nickname: emp.nickname, position: emp.position, organizational_unit: emp.organizational_unit, role: emp.role, password: '' });
+    setFormData({ 
+      employee_code: emp.employee_code, 
+      nickname: emp.nickname, 
+      position: emp.position, 
+      organizational_unit: emp.organizational_unit, 
+      role: emp.role, 
+      password: '',
+      status: emp.status || 'active'
+    });
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
     setShowModal(false); setEditingEmployee(null);
-    setFormData({ employee_code: '', nickname: '', position: '', organizational_unit: '', role: 'user', password: '' });
+    setFormData({ employee_code: '', nickname: '', position: '', organizational_unit: '', role: 'user', password: '', status: 'active' });
   };
 
   const handleSearch = (e) => {
@@ -138,6 +147,17 @@ export default function EmployeeSection() {
     finally { setAdjustLoading(false); }
   };
 
+  const toggleEmployeeStatus = async (emp) => {
+    const newStatus = emp.status === 'active' ? 'inactive' : 'active';
+    try {
+      const r = await employeeService.update(emp.id, { status: newStatus });
+      if (r.ok) {
+        toast.success(`เปลี่ยนสถานะเป็น ${newStatus === 'active' ? 'เปิดใช้งาน' : 'ปิดใช้งาน'} สำเร็จ`);
+        setEmployees(employees.map(e => e.id === emp.id ? { ...e, status: newStatus } : e));
+      }
+    } catch { toast.error('ไม่สามารถเปลี่ยนสถานะได้'); }
+  };
+
   const inputCls = "w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 bg-white transition-all placeholder:text-slate-400";
 
   return (
@@ -188,6 +208,7 @@ export default function EmployeeSection() {
                 <th className="px-4 py-3.5 text-center">แต้มสะสม</th>
                 <th className="px-4 py-3.5 text-center">แต้มคงเหลือ</th>
                 <th className="px-4 py-3.5 text-center">Role</th>
+                <th className="px-4 py-3.5 text-center">สถานะ</th>
                 <th className="px-4 py-3.5 text-center w-24">จัดการ</th>
               </tr>
             </thead>
@@ -215,6 +236,19 @@ export default function EmployeeSection() {
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${emp.role === 'admin' ? 'bg-amber-50 text-amber-700 border border-amber-200/50' : 'bg-blue-50 text-blue-700 border border-blue-200/50'}`}>
                       {emp.role === 'admin' ? <ShieldCheck className="w-3.5 h-3.5" /> : <Shield className="w-3.5 h-3.5" />}{emp.role.toUpperCase()}
                     </span>
+                  </td>
+                  <td className="px-4 py-3.5 text-center">
+                    <button 
+                      onClick={() => toggleEmployeeStatus(emp)}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all border ${
+                        emp.status === 'active' 
+                        ? 'bg-emerald-50 text-emerald-600 border-emerald-200/50 hover:bg-emerald-100' 
+                        : 'bg-slate-100 text-slate-400 border-slate-200 hover:bg-slate-200'
+                      }`}
+                    >
+                      <div className={`w-1.5 h-1.5 rounded-full ${emp.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
+                      {emp.status === 'active' ? 'Active' : 'Inactive'}
+                    </button>
                   </td>
                   <td className="px-4 py-3.5 text-center">
                     <div className="flex items-center justify-center gap-1">
@@ -394,6 +428,13 @@ export default function EmployeeSection() {
                   <input type="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} required={!editingEmployee} className={inputCls} />
                 </div>
               )}
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1.5">สถานะการใช้งาน</label>
+                <select value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })} className={`${inputCls} appearance-none`}>
+                  <option value="active">เปิดใช้งาน (Active)</option>
+                  <option value="inactive">ปิดใช้งาน (Inactive)</option>
+                </select>
+              </div>
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={handleCloseModal} className="flex-1 px-4 py-2.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition-colors">ยกเลิก</button>
                 <button type="submit" disabled={loading} className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 rounded-xl transition-all disabled:opacity-50 shadow-sm shadow-blue-500/20">{loading ? 'กำลังบันทึก...' : 'บันทึก'}</button>

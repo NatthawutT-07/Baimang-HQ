@@ -56,6 +56,10 @@ export default function RewardSection() {
     try {
       const res = await employeeService.getByCode(employeeCode.trim());
       if (res.data) {
+        if (res.data.status === 'inactive') {
+          setError('รหัสพนักงานนี้ถูกระงับการใช้งาน');
+          return;
+        }
         // point_redeemed is the usable balance
         const available = res.data.point_redeemed || 0;
         res.data.availablePoints = available;

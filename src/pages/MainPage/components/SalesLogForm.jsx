@@ -40,7 +40,7 @@ export default function SalesLogForm() {
         employeeService.getAll(),
         branchService.getAll()
       ]);
-      const normalEmployees = (empRes.data || []).filter(emp => emp.role !== 'admin');
+      const normalEmployees = (empRes.data || []).filter(emp => emp.role !== 'admin' && emp.status === 'active');
       setEmployees(normalEmployees);
       setBranches(branchRes.data || []);
     } catch (error) {
