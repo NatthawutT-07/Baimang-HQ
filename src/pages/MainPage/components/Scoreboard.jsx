@@ -111,8 +111,13 @@ export default function Scoreboard() {
                   return (
                     <div key={emp.employee_code} className={`flex items-center justify-between border border-emerald-50 rounded-xl px-3 py-3 shadow-sm transition-colors ${tier.rowColor}`}>
                       <div className="flex items-center space-x-3 min-w-0">
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-sm font-bold text-emerald-700">
-                          {rank === 1 ? '👑' : rank}
+                        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                          rank === 1 ? 'bg-amber-100 text-amber-600 scale-110 shadow-sm shadow-amber-200' : 
+                          rank === 2 ? 'bg-slate-100 text-slate-500 shadow-sm shadow-slate-200' : 
+                          rank === 3 ? 'bg-orange-50 text-orange-600 shadow-sm shadow-orange-200' : 
+                          'bg-emerald-50 text-emerald-700'
+                        }`}>
+                          {rank === 1 ? '👑' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank}
                         </div>
                         <div className="min-w-0">
                           <div className="text-sm font-medium text-gray-900 truncate">{emp.nickname}</div>
@@ -152,8 +157,11 @@ export default function Scoreboard() {
                       const tier = getTierInfo(emp.point_earned);
                       return (
                         <tr key={emp.employee_code} className={`transition-colors ${tier.rowColor}`}>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium text-center">
-                            {rank === 1 ? '👑 1' : rank}
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold text-center">
+                            {rank === 1 ? <span className="text-xl">👑</span> : 
+                             rank === 2 ? <span className="text-xl">🥈</span> : 
+                             rank === 3 ? <span className="text-xl">🥉</span> : 
+                             rank}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             {emp.employee_code} - {emp.nickname}
