@@ -267,22 +267,22 @@ export default function LogSection() {
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          <span className="text-[12px] text-slate-600 font-mono lowercase tracking-tighter">({log.employee_code})</span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] text-slate-400 font-mono">({log.employee_code})</span>
                           <span className="font-bold text-slate-800">{log.employee?.nickname || 'ไม่ระบุ'}</span>
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <div className="flex flex-col">
-                          <span className="text-slate-700 font-medium">{log.branch_name || (['หักคะแนน', 'เพิ่มคะแนน'].includes(log.action) ? 'HQ (ระบบ)' : '-')}</span>
-                          <span className="text-[10px] text-slate-400 font-mono tracking-tighter">#{log.branch_code || 'ADMIN'}</span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] text-slate-400 font-mono">#{log.branch_code || 'ADM'}</span>
+                          <span className="text-slate-700 font-medium">{log.branch_name || (['หักคะแนน', 'เพิ่มคะแนน'].includes(log.action) ? 'HQ' : '-')}</span>
                         </div>
                       </td>
                       <td className="px-4 py-3 text-right">
                         {log.action === 'ขาย' ? (
-                          <div className="flex flex-col items-end">
-                            <span className="text-slate-800 font-bold">{log.sales?.toLocaleString()} ฿</span>
-                            <span className="text-[10px] text-slate-400">เป้าหมาย: {log.target?.toLocaleString()}</span>
+                          <div className="flex items-center justify-end gap-2">
+                            <span className="text-slate-800 font-bold">{log.sales?.toLocaleString()}</span>
+                            <span className="text-[10px] text-slate-400">/ {log.target?.toLocaleString()}</span>
                           </div>
                         ) : (
                           <span className={`font-bold ${['หักคะแนน'].includes(log.action) ? 'text-rose-600' : (['เพิ่มคะแนน', 'ขาย'].includes(log.action) ? 'text-emerald-600' : 'text-blue-600')}`}>{log.reward || '-'}</span>
@@ -294,17 +294,7 @@ export default function LogSection() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <div className="flex flex-col items-end space-y-1">
-                          <div className="flex flex-col items-end">
-                            <span className="text-slate-700 font-bold">{formatDate(log.date || log.created_at)}</span>
-                          </div>
-                          {log.action === 'ขาย' && (
-                            <div className="flex items-center gap-1.5 text-[10px] text-slate-400 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100">
-                              <Clock className="w-3 h-3 text-slate-300" />
-                              <span>บันทึกเมื่อ: {formatDate(log.created_at)}</span>
-                            </div>
-                          )}
-                        </div>
+                        <span className="text-slate-700 font-bold">{formatDate(log.date || log.created_at)}</span>
                       </td>
                     </tr>
                   ))}

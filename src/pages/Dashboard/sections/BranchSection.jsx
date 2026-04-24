@@ -190,15 +190,15 @@ export default function BranchSection() {
                 {filteredBranches.map((branch) => (
                   <tr key={branch.id} className="hover:bg-slate-50/50 transition-colors group">
                     <td className="px-4 py-3">
-                      <div className="flex flex-col">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] text-slate-400 font-mono">#{branch.branch_code}</span>
                         <span className="font-bold text-slate-800">{branch.branch_name}</span>
-                        <span className="text-[10px] text-slate-400 font-mono tracking-tighter">CODE: {branch.branch_code}</span>
                       </div>
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <div className="flex flex-col items-center">
-                        <span className="text-slate-600 font-bold">{branch.month}</span>
-                        <span className="text-[10px] text-slate-400">({branch.day} วัน)</span>
+                      <div className="flex items-center justify-center gap-1.5 text-slate-600 font-bold">
+                        <span>{branch.month}</span>
+                        <span className="text-[10px] text-slate-400 font-normal">({branch.day} วัน)</span>
                       </div>
                     </td>
                     <td className="px-4 py-3 text-right">

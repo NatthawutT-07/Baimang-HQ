@@ -369,15 +369,16 @@ export default function EmployeeSection() {
                     <tr key={emp.id} className="hover:bg-slate-50/50 transition-colors group">
                       <td className="px-4 py-3 text-center text-slate-400 font-mono text-[11px]">{emp.id}</td>
                       <td className="px-4 py-3">
-                        <div className="flex flex-col">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] text-slate-400 font-mono">({emp.employee_code})</span>
                           <span className="font-bold text-slate-800">{emp.nickname}</span>
-                          <span className="text-[10px] text-slate-400 font-mono">CODE: {emp.employee_code}</span>
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <div className="flex flex-col max-w-[200px]">
-                          <span className="text-slate-600 font-medium truncate">{emp.position}</span>
-                          <span className="text-[11px] text-slate-400 truncate">{emp.organizational_unit}</span>
+                        <div className="flex items-center gap-1.5 text-slate-600 font-medium">
+                          <span>{emp.position}</span>
+                          <span className="text-slate-300">|</span>
+                          <span className="text-[11px] text-slate-400 font-normal">{emp.organizational_unit}</span>
                         </div>
                       </td>
                       <td className="px-4 py-3 text-center font-bold text-emerald-600">{emp.point_earned.toLocaleString()}</td>
@@ -489,7 +490,7 @@ export default function EmployeeSection() {
               <div className="p-5 bg-emerald-50/30 rounded-2xl border border-emerald-100 animate-in fade-in slide-in-from-top-2">
                 <div className="flex justify-between items-center mb-4">
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] text-slate-400 font-mono tracking-tighter">({targetEmployee.employee_code})</span>
+                    <span className="text-[11px] text-slate-800 font-mono tracking-tighter">({targetEmployee.employee_code})</span>
                     <h4 className="font-bold text-slate-800">{targetEmployee.nickname}</h4>
                   </div>
                   <span className="text-[10px] bg-white px-2 py-1 rounded-md text-emerald-600 font-bold border border-emerald-100 shadow-sm">ข้อมูลพบ</span>
