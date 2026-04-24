@@ -26,9 +26,16 @@ const sectionMeta = {
 
 export default function DashboardPage() {
   const navigate = useNavigate();
-  const [activeSection, setActiveSection] = useState(SECTIONS.BRANCHES);
+  const [activeSection, setActiveSection] = useState(() => {
+    const saved = localStorage.getItem('hq_dashboard_section');
+    return Object.values(SECTIONS).includes(saved) ? saved : SECTIONS.BRANCHES;
+  });
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    localStorage.setItem('hq_dashboard_section', activeSection);
+  }, [activeSection]);
 
   useEffect(() => { setUser(authService.getCurrentUser()); }, []);
 
