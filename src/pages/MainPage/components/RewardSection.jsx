@@ -86,8 +86,19 @@ export default function RewardSection() {
     try {
       const getThaiDateTimeLocal = () => {
         const d = new Date();
-        const thaiTime = new Date(d.getTime() + (7 * 60 * 60 * 1000));
-        return thaiTime.toISOString().slice(0, 16);
+        const formatter = new Intl.DateTimeFormat('en-GB', {
+          timeZone: 'Asia/Bangkok',
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false
+        });
+        const parts = formatter.formatToParts(d);
+        const getPart = (type) => parts.find(p => p.type === type).value;
+        // Format: YYYY-MM-DDTHH:mm:ss+07:00
+        return `${getPart('year')}-${getPart('month')}-${getPart('day')}T${getPart('hour')}:${getPart('minute')}:00+07:00`;
       };
 
       const logData = {

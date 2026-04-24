@@ -12,13 +12,23 @@ export default function SalesLogForm() {
   const [submitting, setSubmitting] = useState(false);
   const [submitResult, setSubmitResult] = useState(null); // { type: 'success'|'error', point, message }
 
-  const getThaiNow = () => {
+  const getThaiDate = () => {
     const d = new Date();
-    return new Date(d.getTime() + (7 * 60 * 60 * 1000));
+    // Use Intl to get Thailand date parts
+    const formatter = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Bangkok' });
+    return formatter.format(d); // returns YYYY-MM-DD
   };
 
-  const getThaiDate = () => getThaiNow().toISOString().slice(0, 10);
-  const getThaiTime = () => getThaiNow().toISOString().slice(11, 16);
+  const getThaiTime = () => {
+    const d = new Date();
+    const formatter = new Intl.DateTimeFormat('en-GB', { 
+      timeZone: 'Asia/Bangkok', 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: false 
+    });
+    return formatter.format(d);
+  };
 
   const formatThaiDate = (dateStr) => {
     if (!dateStr) return '';
@@ -120,7 +130,7 @@ export default function SalesLogForm() {
         employee_code: formData.employee_code,
         branch_code: formData.branch_code,
         branch_name: selectedBranch.branch_name,
-        date: formData.date + 'T' + currentTime,
+        date: formData.date + 'T' + currentTime + ':00+07:00',
         action: 'ขาย',
         sales: salesNum,
         target: avgTarget,

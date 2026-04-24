@@ -110,13 +110,15 @@ export default function LogSection() {
   // --- Helper Functions ---
   const formatDate = (d) => {
     if (!d) return '-';
-    const localStr = typeof d === 'string' && d.endsWith('Z') ? d.slice(0, -1) : d;
-    return new Date(localStr).toLocaleDateString('th-TH', {
+    // Use the Date object directly. If it's an ISO string with 'Z', 
+    // new Date() will correctly convert it to the user's local time.
+    return new Date(d).toLocaleString('th-TH', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
+      hour12: false
     });
   };
 
