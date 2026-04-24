@@ -726,7 +726,7 @@ export default function EmployeeSection() {
                     />
                   </div>
                 </div>
-                <div>
+                {/* <div>
                   <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">บทบาทผู้ใช้งาน (Role)</label>
                   <div className="grid grid-cols-2 gap-3">
                     <button
@@ -746,7 +746,7 @@ export default function EmployeeSection() {
                       Admin
                     </button>
                   </div>
-                </div>
+                </div> */}
 
                 {formData.role === 'admin' && (
                   <div className="animate-in slide-in-from-top-2 duration-200">
