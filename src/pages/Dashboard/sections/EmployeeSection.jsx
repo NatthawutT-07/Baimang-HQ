@@ -26,6 +26,7 @@ export default function EmployeeSection() {
   const [pointSearchCode, setPointSearchCode] = useState('');
   const [targetEmployee, setTargetEmployee] = useState(null);
   const [pointAmount, setPointAmount] = useState('');
+  const [pointNote, setPointNote] = useState('');
   const [adjustLoading, setAdjustLoading] = useState(false);
 
   // Point Deduction States (Admin Rules)
@@ -135,7 +136,11 @@ export default function EmployeeSection() {
     setAdjustLoading(true);
     try {
       const res = await employeeService.getByCode(pointSearchCode);
-      if (res.ok) setTargetEmployee(res.data);
+      if (res.ok) {
+        setTargetEmployee(res.data);
+        setPointAmount('');
+        setPointNote('');
+      }
       else toast.error(res.message || 'ไม่พบพนักงานรหัสนี้');
     } catch (err) { toast.error('เกิดข้อผิดพลาดในการค้นหา'); }
     finally { setAdjustLoading(false); }
@@ -144,8 +149,8 @@ export default function EmployeeSection() {
   const handleUpdatePoints = async (type) => {
     if (!targetEmployee) return;
     let confirmMsg = '';
-    if (type === 'reset') confirmMsg = `ยืนยันการล้างแต้มของคุณ ${targetEmployee.nickname} เป็น 0 ทั้งหมด?`;
-    else if (type === 'add') confirmMsg = `ยืนยันการเพิ่มแต้มจำนวน ${pointAmount} แต้ม ให้กับคุณ ${targetEmployee.nickname}?`;
+    if (type === 'reset') confirmMsg = `ยืนยันการล้างแต้มของคุณ ${targetEmployee.nickname} เป็น 0 ทั้งหมด`;
+    else if (type === 'add') confirmMsg = `ยืนยันการเพิ่มแต้มจำนวน ${pointAmount} แต้ม ให้กับคุณ ${targetEmployee.nickname}${pointNote ? ` สาเหตุ: ${pointNote}` : ''}`;
     setConfirmModal({ show: true, type, message: confirmMsg });
   };
 
@@ -153,7 +158,7 @@ export default function EmployeeSection() {
     setConfirmModal({
       show: true,
       type: 'reset-all',
-      message: 'คุณแน่ใจหรือไม่ว่าต้องการ "ล้างแต้มพนักงานทุกคน" เป็น 0? การดำเนินการนี้ไม่สามารถเรียกคืนได้'
+      message: 'คุณแน่ใจหรือไม่ว่าต้องการ "ล้างแต้มพนักงานทุกคน" เป็น 0 การดำเนินการนี้ไม่สามารถเรียกคืนได้'
     });
   };
 
@@ -245,9 +250,23 @@ export default function EmployeeSection() {
 
       const res = await employeeService.update(targetEmployee.id, updateData);
       if (res.ok) {
+        if (type === 'add') {
+          await logService.create({
+            employee_code: targetEmployee.employee_code,
+            branch_code: null,
+            branch_name: null,
+            date: new Date().toISOString(),
+            action: 'เพิ่มคะแนน',
+            target: null,
+            sales: null,
+            point: parseInt(pointAmount),
+            reward: pointNote || 'เพิ่มคะแนนโดยผู้บริหาร'
+          });
+        }
         toast.success('ปรับปรุงแต้มพนักงานสำเร็จ');
         setTargetEmployee(res.data);
         setPointAmount('');
+        setPointNote('');
         fetchEmployees(pagination.offset);
       }
     } catch (err) {
@@ -435,8 +454,7 @@ export default function EmployeeSection() {
               <Star className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-slate-800">ระบบจัดการแต้มคะแนน</h3>
-              <p className="text-xs text-slate-400">เพิ่ม ลด หรือล้างคะแนนพนักงานรายบุคคล</p>
+              <h3 className="text-lg font-bold text-slate-800">ระบบเพิ่มแต้มคะแนน</h3>
             </div>
           </div>
           <button
@@ -450,7 +468,6 @@ export default function EmployeeSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Search Card */}
           <div className="space-y-4">
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">ค้นหาพนักงาน</label>
             <form onSubmit={handleSearchForPoints} className="flex gap-2">
               <input
                 type="text"
@@ -497,10 +514,9 @@ export default function EmployeeSection() {
 
           {/* Action Card */}
           <div className={`space-y-4 transition-all duration-300 ${targetEmployee ? 'opacity-100' : 'opacity-40 grayscale pointer-events-none'}`}>
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">ดำเนินการ</label>
             <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 space-y-5">
               <div>
-                <span className="block text-[11px] text-slate-400 mb-2 font-medium">จำนวนแต้มที่ต้องการจัดการ</span>
+                <span className="block text-[11px] text-slate-400 mb-2 font-medium">จำนวนแต้มที่ต้องการเพิ่ม</span>
                 <input
                   type="number"
                   placeholder="0"
@@ -509,20 +525,30 @@ export default function EmployeeSection() {
                   className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-lg font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all text-center"
                 />
               </div>
+              <div>
+                <span className="block text-[11px] text-slate-400 mb-2 font-medium">หมายเหตุการเพิ่มแต้ม</span>
+                <input
+                  type="text"
+                  placeholder="ระบุสาเหตุการเพิ่มแต้ม..."
+                  value={pointNote}
+                  onChange={(e) => setPointNote(e.target.value)}
+                  className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all"
+                />
+              </div>
               <div className="flex gap-3">
                 <button
                   onClick={() => handleUpdatePoints('add')}
                   disabled={adjustLoading || !pointAmount}
                   className="flex-[7] flex items-center justify-center gap-2 py-3.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-all active:scale-95 shadow-sm shadow-blue-200 disabled:opacity-50"
                 >
-                  <Plus className="w-5 h-5" /> เพิ่มแต้ม
+                  เพิ่มแต้ม
                 </button>
                 <button
                   onClick={() => handleUpdatePoints('reset')}
                   disabled={adjustLoading}
                   className="flex-[3] flex items-center justify-center gap-2 py-3.5 text-rose-600 bg-white border border-rose-100 rounded-xl text-sm font-bold hover:bg-rose-50 transition-all active:scale-95 disabled:opacity-50"
                 >
-                  <RotateCcw className="w-4 h-4" /> ล้าง
+                  ล้าง
                 </button>
               </div>
             </div>
@@ -539,15 +565,13 @@ export default function EmployeeSection() {
             <AlertCircle className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-slate-800">ระเบียบวินัยและหักคะแนน</h3>
-            <p className="text-xs text-slate-400">หักคะแนนพนักงานตามกฎระเบียบของบริษัท</p>
+            <h3 className="text-lg font-bold text-slate-800">ระบบหักแต้มพนักงาน</h3>
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 relative z-10">
           {/* Search Column */}
           <div className="space-y-4">
-            <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">ค้นหาพนักงานเพื่อดำเนินการ</label>
             <form onSubmit={handleSearchForDeduct} className="flex gap-2">
               <input
                 type="text"
@@ -593,7 +617,6 @@ export default function EmployeeSection() {
                 <div className="flex items-center gap-4">
                   <div className="text-left">
                     <span className="block font-bold text-slate-800 text-sm">ใบเตือน</span>
-                    <span className="text-[10px] text-slate-400">กรณีทำผิดกฎระเบียบร้ายแรง</span>
                   </div>
                 </div>
                 <span className="text-lg font-black text-rose-600">-20</span>
@@ -607,7 +630,6 @@ export default function EmployeeSection() {
                 <div className="flex items-center gap-4">
                   <div className="text-left">
                     <span className="block font-bold text-slate-800 text-sm">ยอดไม่ถึง 80% ของเป้า</span>
-                    <span className="text-[10px] text-slate-400">เป้ารายเดือนสาขา</span>
                   </div>
                 </div>
                 <span className="text-lg font-black text-amber-600">-5</span>
@@ -622,10 +644,7 @@ export default function EmployeeSection() {
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-[70] p-4 animate-in fade-in duration-300">
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-xs overflow-hidden border border-slate-100 animate-in zoom-in-95 duration-200">
             <div className="p-8 text-center">
-              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-inner ${confirmModal.type === 'deduct' || confirmModal.type.includes('reset') ? 'bg-rose-50 text-rose-500' : 'bg-emerald-50 text-emerald-500'
-                }`}>
-                {confirmModal.type === 'deduct' ? <AlertCircle className="w-8 h-8" /> : (confirmModal.type.includes('reset') ? <RotateCcw className="w-8 h-8" /> : <Plus className="w-8 h-8" />)}
-              </div>
+
               <h3 className="text-lg font-bold text-slate-800 mb-2">ยืนยันการดำเนินการ</h3>
               <p className="text-sm text-slate-500 leading-relaxed px-2">{confirmModal.message}</p>
             </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Search, FileText, ChevronLeft, ChevronRight, ArrowUpCircle, Gift, X, Clock, AlertTriangle, Download } from 'lucide-react';
+import { Search, FileText, ChevronLeft, ChevronRight, ArrowUpCircle, Gift, X, Clock, AlertTriangle, Download, PlusCircle } from 'lucide-react';
 import { logService } from '../../../services/logService';
 import { toast } from 'react-toastify';
 import * as XLSX from 'xlsx';
@@ -75,19 +75,20 @@ export default function LogSection() {
         return;
       }
 
+      // Sort data by created_at DESC (newest first)
+      const sortedData = [...res.data].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
       // Format data for Excel
-      const excelData = res.data.map(log => ({
-        'ID': log.id,
+      const excelData = sortedData.map(log => ({
         'รหัสพนักงาน': log.employee_code,
         'ชื่อพนักงาน': log.employee?.nickname || '-',
         'กิจกรรม': log.action,
-        'สาขา': log.branch_name || (log.action === 'หักคะแนน' ? 'HQ (ระบบ)' : '-'),
+        'สาขา': log.branch_name || (['หักคะแนน', 'เพิ่มคะแนน'].includes(log.action) ? 'HQ (ระบบ)' : '-'),
         'รหัสสาขา': log.branch_code || '-',
         'ยอดขาย': log.sales || 0,
         'เป้าหมาย': log.target || 0,
         'แต้มที่ได้รับ/ใช้': log.point || 0,
         'รางวัล/สาเหตุ': log.reward || '-',
-        'วันที่กิจกรรม': formatDate(log.date || log.created_at),
         'เวลาที่บันทึกระบบ': formatDate(log.created_at)
       }));
 
@@ -176,7 +177,8 @@ export default function LogSection() {
               { value: '', label: 'ทั้งหมด' },
               { value: 'ขาย', label: 'ขาย' },
               { value: 'แลกรางวัล', label: 'แลกรางวัล' },
-              { value: 'หักคะแนน', label: 'หักคะแนน' }
+              { value: 'หักคะแนน', label: 'หักคะแนน' },
+              { value: 'เพิ่มคะแนน', label: 'เพิ่มคะแนน' }
             ].map(f => (
               <button
                 key={f.value}
@@ -254,9 +256,11 @@ export default function LogSection() {
                           ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
                           : log.action === 'แลกรางวัล'
                             ? 'bg-blue-50 text-blue-700 border-blue-100'
-                            : 'bg-rose-50 text-rose-700 border-rose-100'
+                            : log.action === 'เพิ่มคะแนน'
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                              : 'bg-rose-50 text-rose-700 border-rose-100'
                           }`}>
-                          {log.action === 'ขาย' ? <ArrowUpCircle className="w-3 h-3" /> : (log.action === 'แลกรางวัล' ? <Gift className="w-3 h-3" /> : <AlertTriangle className="w-3 h-3" />)}
+                          {log.action === 'ขาย' ? <ArrowUpCircle className="w-3 h-3" /> : (log.action === 'แลกรางวัล' ? <Gift className="w-3 h-3" /> : (log.action === 'เพิ่มคะแนน' ? <PlusCircle className="w-3 h-3" /> : <AlertTriangle className="w-3 h-3" />))}
                           {log.action}
                         </span>
                       </td>
@@ -268,7 +272,7 @@ export default function LogSection() {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex flex-col">
-                          <span className="text-slate-700 font-medium">{log.branch_name || (log.action === 'หักคะแนน' ? 'HQ (ระบบ)' : '-')}</span>
+                          <span className="text-slate-700 font-medium">{log.branch_name || (['หักคะแนน', 'เพิ่มคะแนน'].includes(log.action) ? 'HQ (ระบบ)' : '-')}</span>
                           <span className="text-[10px] text-slate-400 font-mono tracking-tighter">#{log.branch_code || 'ADMIN'}</span>
                         </div>
                       </td>
@@ -279,7 +283,7 @@ export default function LogSection() {
                             <span className="text-[10px] text-slate-400">เป้าหมาย: {log.target?.toLocaleString()}</span>
                           </div>
                         ) : (
-                          <span className={`font-bold ${log.action === 'หักคะแนน' ? 'text-rose-600' : 'text-blue-600'}`}>{log.reward || '-'}</span>
+                          <span className={`font-bold ${['หักคะแนน'].includes(log.action) ? 'text-rose-600' : (['เพิ่มคะแนน', 'ขาย'].includes(log.action) ? 'text-emerald-600' : 'text-blue-600')}`}>{log.reward || '-'}</span>
                         )}
                       </td>
                       <td className="px-4 py-3 text-center">
