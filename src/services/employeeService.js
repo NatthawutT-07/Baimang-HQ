@@ -2,46 +2,38 @@ import api from '../config/api';
 
 export const employeeService = {
   getAll: async (params = {}) => {
-    const response = await api.get('/hq/employees', { params });
-    return response.data;
+    return await api.get('/hq/employees', { params });
   },
 
   getById: async (id) => {
-    const response = await api.get(`/hq/employees/${id}`);
-    return response.data;
+    return await api.get(`/hq/employees/${id}`);
   },
 
   getByCode: async (employee_code) => {
-    const response = await api.get(`/hq/employees/code/${employee_code}`);
-    return response.data;
+    return await api.get(`/hq/employees/code/${employee_code}`);
   },
 
   getStats: async (id) => {
-    const response = await api.get(`/hq/employees/${id}/stats`);
-    return response.data;
+    return await api.get(`/hq/employees/${id}/stats`);
   },
 
   create: async (data) => {
-    const response = await api.post('/hq/employees', data);
-    return response.data;
+    return await api.post('/hq/employees', data);
   },
 
   bulkCreate: async (employees) => {
-    const response = await api.post('/hq/employees/bulk', { employees });
-    return response.data;
+    return await api.post('/hq/employees/bulk', { employees });
   },
 
   resetAllPoints: async () => {
-    const response = await api.post('/hq/employees/reset-all-points');
-    return response.data;
+    return await api.post('/hq/employees/reset-all-points');
   },
+
   update: async (id, data) => {
-    const response = await api.put(`/hq/employees/${id}`, data);
-    return response.data;
+    return await api.put(`/hq/employees/${id}`, data);
   },
 
   delete: async (id) => {
-    const response = await api.delete(`/hq/employees/${id}`);
-    return response.data;
+    return await api.delete(`/hq/employees/${id}`);
   },
 };

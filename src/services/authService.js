@@ -1,26 +1,28 @@
 import api from '../config/api';
 
 export const authService = {
-  register: async (employeeData) => {
-    const response = await api.post('/hq/auth/register', employeeData);
-    return response.data;
-  },
-
+  // --- Async API Methods ---
   login: async (employee_code, password) => {
-    const response = await api.post('/hq/auth/login', { employee_code, password });
-    return response.data;
+    // Standardize payload for the backend
+    const res = await api.post('/hq/auth/login', { employee_code, password });
+    
+    // If login successful, persist credentials
+    if (res.ok && res.data?.token) {
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
+    }
+    return res;
   },
 
-  logout: () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+  register: async (data) => {
+    return await api.post('/hq/auth/register', data);
   },
 
-  getCurrentUser: () => {
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+  fetchProfile: async () => {
+    return await api.get('/hq/auth/me');
   },
 
+  // --- Synchronous Helper Methods ---
   isAuthenticated: () => {
     return !!localStorage.getItem('token');
   },
@@ -28,5 +30,19 @@ export const authService = {
   isAdmin: () => {
     const user = authService.getCurrentUser();
     return user?.role === 'admin';
+  },
+
+  getCurrentUser: () => {
+    try {
+      const user = localStorage.getItem('user');
+      return user ? JSON.parse(user) : null;
+    } catch (e) {
+      return null;
+    }
+  },
+
+  logout: () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
   },
 };

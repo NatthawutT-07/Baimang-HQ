@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogIn, User, Lock, UserPlus, Briefcase, Building } from 'lucide-react';
+import { LogIn, User, Lock, UserPlus, Briefcase, Building, ArrowRight } from 'lucide-react';
 import { authService } from '../services/authService';
 import { toast } from 'react-toastify';
 
 export default function LoginPage() {
+  // --- States ---
   const navigate = useNavigate();
   const [isRegister, setIsRegister] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     employee_code: '',
     password: '',
@@ -15,13 +17,10 @@ export default function LoginPage() {
     organizational_unit: '',
     role: 'user',
   });
-  const [loading, setLoading] = useState(false);
 
+  // --- Handlers ---
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e) => {
@@ -30,226 +29,189 @@ export default function LoginPage() {
 
     try {
       if (isRegister) {
-        const response = await authService.register(formData);
-
-        if (response.ok) {
+        const res = await authService.register(formData);
+        if (res.ok) {
           toast.success('ลงทะเบียนสำเร็จ! กรุณาเข้าสู่ระบบ');
           setIsRegister(false);
-          setFormData({
-            employee_code: formData.employee_code,
-            password: '',
-            nickname: '',
-            position: '',
-            organizational_unit: '',
-            role: 'user',
-          });
         } else {
-          toast.error(response.message || 'ลงทะเบียนไม่สำเร็จ');
+          toast.error(res.message || 'ลงทะเบียนไม่สำเร็จ');
         }
       } else {
-        const response = await authService.login(formData.employee_code, formData.password);
-
-        if (response.ok) {
-          localStorage.setItem('token', response.token);
-          localStorage.setItem('user', JSON.stringify(response.user));
+        const res = await authService.login(formData.employee_code, formData.password);
+        if (res.ok) {
           toast.success('เข้าสู่ระบบสำเร็จ!');
-
-          if (response.user.role === 'admin') {
+          const user = authService.getCurrentUser();
+          if (user?.role === 'admin') {
             navigate('/dashboard');
           } else {
             navigate('/');
           }
         } else {
-          toast.error(response.message || 'เข้าสู่ระบบไม่สำเร็จ');
+          // If the request was successful but ok: false (standardized failure)
+          toast.error(res.message || 'เข้าสู่ระบบไม่สำเร็จ');
         }
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+      // If the request failed (4xx/5xx) - use the standardized message from interceptor
+      toast.error(error.message || 'เกิดข้อผิดพลาดในการเชื่อมต่อ');
     } finally {
       setLoading(false);
     }
   };
 
+  // --- Styles ---
+  const inputCls = "w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-400 transition-all";
+  const labelCls = "block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1";
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-amber-50 px-4 py-5">
-      <div className="w-full max-w-md rounded-2xl border border-emerald-100 bg-white/90 p-6 shadow-xl backdrop-blur">
+    <div className="min-h-screen flex items-center justify-center bg-[#f8fafc] px-4 py-8 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:20px_20px]">
+      <div className="w-full max-w-[440px] animate-in fade-in zoom-in-95 duration-500">
+        
+        {/* Logo/Brand Area */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-600 rounded-full mb-4">
-            {isRegister ? <UserPlus className="h-8 w-8 text-white" /> : <LogIn className="h-8 w-8 text-white" />}
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-emerald-600 rounded-[2rem] shadow-xl shadow-emerald-200 mb-6 rotate-3 hover:rotate-0 transition-transform duration-300">
+            {isRegister ? <UserPlus className="h-10 w-10 text-white" /> : <LogIn className="h-10 w-10 text-white" />}
           </div>
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">
-            {isRegister ? 'ลงทะเบียน' : 'เข้าสู่ระบบ'}
-          </h2>
-          {/* <p className="text-gray-600">
-            {isRegister ? 'สร้างบัญชีพนักงานใหม่' : 'กรุณากรอกรหัสพนักงานและรหัสผ่าน'}
-          </p> */}
+          <h1 className="text-3xl font-black text-slate-800 tracking-tight">
+            {isRegister ? 'สร้างบัญชีใหม่' : 'ยินดีต้อนรับกลับมา'}
+          </h1>
+          <p className="text-slate-400 text-sm mt-2 font-medium">
+            {isRegister ? 'กรอกรายละเอียดเพื่อเริ่มต้นใช้งาน' : 'เข้าสู่ระบบบริหารจัดการ HQ'}
+          </p>
         </div>
 
-        <div className="rounded-xl border border-emerald-100 bg-emerald-50/60 p-4">
-          <form onSubmit={handleSubmit} className="space-y-3">
+        {/* Login Card */}
+        <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/60 border border-slate-100 p-8 sm:p-10 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-full -mr-16 -mt-16 opacity-50" />
+          
+          <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                รหัสพนักงาน
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-gray-400" />
-                </div>
+              <label className={labelCls}>รหัสพนักงาน</label>
+              <div className="relative group">
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
                 <input
                   type="text"
                   name="employee_code"
                   value={formData.employee_code}
                   onChange={handleChange}
                   required
-                  className="block w-full pl-10 pr-3 py-3 border border-emerald-200 bg-white rounded-lg text-sm text-slate-700 shadow-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                  className={inputCls}
                   placeholder=""
                 />
               </div>
             </div>
 
             {isRegister && (
-              <>
+              <div className="space-y-5 animate-in slide-in-from-top-4 duration-300">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    ชื่อเล่น
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <User className="h-5 w-5 text-gray-400" />
-                    </div>
+                  <label className={labelCls}>ชื่อเล่น</label>
+                  <div className="relative group">
+                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
                     <input
                       type="text"
                       name="nickname"
                       value={formData.nickname}
                       onChange={handleChange}
                       required
-                      className="block w-full pl-10 pr-3 py-3 border border-emerald-200 bg-white rounded-lg text-sm text-slate-700 shadow-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
-                      placeholder="กรอกชื่อเล่น"
+                      className={inputCls}
+                      placeholder="ระบุชื่อเล่น"
                     />
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    ตำแหน่ง
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Briefcase className="h-5 w-5 text-gray-400" />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className={labelCls}>ตำแหน่ง</label>
+                    <div className="relative group">
+                      <Briefcase className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
+                      <input
+                        type="text"
+                        name="position"
+                        value={formData.position}
+                        onChange={handleChange}
+                        required
+                        className={inputCls}
+                      />
                     </div>
-                    <input
-                      type="text"
-                      name="position"
-                      value={formData.position}
-                      onChange={handleChange}
-                      required
-                      className="block w-full pl-10 pr-3 py-3 border border-emerald-200 bg-white rounded-lg text-sm text-slate-700 shadow-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
-                      placeholder="กรอกตำแหน่ง"
-                    />
                   </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    หน่วยงาน
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Building className="h-5 w-5 text-gray-400" />
+                  <div>
+                    <label className={labelCls}>หน่วยงาน</label>
+                    <div className="relative group">
+                      <Building className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
+                      <input
+                        type="text"
+                        name="organizational_unit"
+                        value={formData.organizational_unit}
+                        onChange={handleChange}
+                        required
+                        className={inputCls}
+                      />
                     </div>
-                    <input
-                      type="text"
-                      name="organizational_unit"
-                      value={formData.organizational_unit}
-                      onChange={handleChange}
-                      required
-                      className="block w-full pl-10 pr-3 py-3 border border-emerald-200 bg-white rounded-lg text-sm text-slate-700 shadow-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
-                      placeholder="กรอกหน่วยงาน"
-                    />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    ประเภทบัญชี
-                  </label>
-                  <select
-                    name="role"
-                    value={formData.role}
-                    onChange={handleChange}
-                    className="block w-full px-3 py-3 border border-emerald-200 bg-white rounded-lg text-sm text-slate-700 shadow-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
-                  >
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
-                  </select>
+                  <label className={labelCls}>ประเภทบัญชี</label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {['user', 'admin'].map(role => (
+                      <button
+                        key={role}
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, role }))}
+                        className={`py-3 rounded-xl text-xs font-bold border transition-all ${formData.role === role
+                          ? 'bg-emerald-50 border-emerald-200 text-emerald-700 shadow-sm'
+                          : 'bg-white border-slate-200 text-slate-400 hover:border-slate-300'
+                          }`}
+                      >
+                        {role.toUpperCase()}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </>
+              </div>
             )}
 
-            {(isRegister && formData.role === 'admin') || !isRegister ? (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  รหัสผ่าน {!isRegister}
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
-                  </div>
+            {(!isRegister || formData.role === 'admin') && (
+              <div className="animate-in slide-in-from-top-4 duration-300">
+                <label className={labelCls}>รหัสผ่าน</label>
+                <div className="relative group">
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
                   <input
                     type="password"
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
-                    required={isRegister && formData.role === 'admin'}
-                    className="block w-full pl-10 pr-3 py-3 border border-emerald-200 bg-white rounded-lg text-sm text-slate-700 shadow-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                    required={!isRegister || formData.role === 'admin'}
+                    className={inputCls}
                     placeholder=""
                   />
                 </div>
               </div>
-            ) : null}
+            )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full rounded-lg bg-emerald-600 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {loading
-                ? (isRegister ? 'กำลังลงทะเบียน...' : 'กำลังเข้าสู่ระบบ...')
-                : (isRegister ? 'ลงทะเบียน' : 'เข้าสู่ระบบ')
-              }
-            </button>
+            <div className="pt-2">
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full h-14 bg-emerald-600 text-white rounded-2xl font-bold text-base shadow-lg shadow-emerald-200 hover:bg-emerald-700 hover:shadow-emerald-300 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <span>{isRegister ? 'ยืนยันการลงทะเบียน' : 'เข้าสู่ระบบ'}</span>
+                    <ArrowRight className="h-5 w-5" />
+                  </>
+                )}
+              </button>
+            </div>
           </form>
         </div>
 
-        {/* <div className="mt-4 text-center">
-          <button
-            onClick={() => {
-              setIsRegister(!isRegister);
-              setFormData({
-                employee_code: '',
-                password: '',
-                nickname: '',
-                position: '',
-                organizational_unit: '',
-                role: 'user',
-              });
-            }}
-            className="text-emerald-700 hover:text-emerald-900 font-medium text-sm underline-offset-2 hover:underline"
-          >
-            {isRegister ? 'มีบัญชีแล้ว? เข้าสู่ระบบ' : 'ยังไม่มีบัญชี? ลงทะเบียน'}
-          </button>
+        {/* Footer info */}
+        <div className="mt-8 flex items-center justify-center gap-6 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">BrightMind HQ System v2.0</p>
         </div>
-
-        {!isRegister && (
-          <div className="mt-3 text-center text-sm text-gray-500">
-            <p>หมายเหตุ: สำหรับพนักงาน Admin เท่านั้นที่ต้องใช้รหัสผ่าน</p>
-          </div>
-        )} */}
-
-        {/* Footer */}
-        <p className="text-center text-xs text-slate-400 mt-4">
-          BrightMind HQ Management System
-        </p>
       </div>
     </div>
   );

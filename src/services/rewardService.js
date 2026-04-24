@@ -2,29 +2,26 @@ import api from '../config/api';
 
 export const rewardService = {
   getAll: async (params = {}) => {
-    const response = await api.get('/hq/rewards', { params });
-    return response.data;
+    return await api.get('/hq/rewards', { params });
   },
 
   getById: async (id) => {
-    const response = await api.get(`/hq/rewards/${id}`);
-    return response.data;
+    return await api.get(`/hq/rewards/${id}`);
   },
 
-  create: async (data) => {
-    const config = data instanceof FormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {};
-    const response = await api.post('/hq/rewards', data, config);
-    return response.data;
+  create: async (formData) => {
+    return await api.post('/hq/rewards', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
   },
 
-  update: async (id, data) => {
-    const config = data instanceof FormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {};
-    const response = await api.put(`/hq/rewards/${id}`, data, config);
-    return response.data;
+  update: async (id, formData) => {
+    return await api.put(`/hq/rewards/${id}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
   },
 
   delete: async (id) => {
-    const response = await api.delete(`/hq/rewards/${id}`);
-    return response.data;
+    return await api.delete(`/hq/rewards/${id}`);
   },
 };

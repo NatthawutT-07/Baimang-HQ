@@ -17,12 +17,18 @@ export default function SalesLogForm() {
     return new Date(d.getTime() + (7 * 60 * 60 * 1000));
   };
 
-  const MIN_DATE = "2026-05-01";
-  const getThaiDate = () => {
-    const now = getThaiNow().toISOString().slice(0, 10);
-    return now < MIN_DATE ? MIN_DATE : now;
-  };
+  const getThaiDate = () => getThaiNow().toISOString().slice(0, 10);
   const getThaiTime = () => getThaiNow().toISOString().slice(11, 16);
+
+  const formatThaiDate = (dateStr) => {
+    if (!dateStr) return '';
+    const [y, m, d] = dateStr.split('-');
+    const months = [
+      'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+      'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+    ];
+    return `${parseInt(d)} ${months[parseInt(m) - 1]} ${parseInt(y) + 543}`;
+  };
 
   // Form State
   const [formData, setFormData] = useState({
@@ -84,6 +90,14 @@ export default function SalesLogForm() {
     return emp ? emp.nickname : 'ไม่พบข้อมูลพนักงาน';
   };
 
+  const isFormValid = () => {
+    const hasEmployee = employees.some(e => e.employee_code === formData.employee_code);
+    const hasBranch = !!formData.branch_code;
+    const hasSales = !!formData.sales;
+    const hasDate = !!formData.date;
+    return hasEmployee && hasBranch && hasSales && hasDate;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (submitting) return;
@@ -128,25 +142,7 @@ export default function SalesLogForm() {
       setFormData(prev => ({ ...prev, sales: '' }));
     } catch (error) {
       console.error('Failed to submit:', error);
-      let errorMsg = 'เกิดข้อผิดพลาดในการบันทึกข้อมูล';
-
-      const responseData = error.response?.data;
-      if (responseData) {
-        if (typeof responseData === 'object' && responseData.message) {
-          errorMsg = responseData.message;
-        } else if (typeof responseData === 'string') {
-          try {
-            const parsed = JSON.parse(responseData);
-            errorMsg = parsed.message || responseData;
-          } catch (e) {
-            errorMsg = responseData;
-          }
-        }
-      } else if (error.message) {
-        errorMsg = error.message;
-      }
-
-      setSubmitResult({ type: 'error', message: errorMsg });
+      setSubmitResult({ type: 'error', message: error.message || 'เกิดข้อผิดพลาดในการบันทึกข้อมูล' });
     } finally {
       setSubmitting(false);
     }
@@ -336,6 +332,9 @@ export default function SalesLogForm() {
                           className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-3 py-2.5 focus:bg-white focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/10 transition-all text-gray-700 text-sm font-medium"
                           required
                         />
+                        {/* <div className="w-full bg-gray-100 border border-gray-100 rounded-xl px-3 py-2.5 text-gray-500 font-bold text-center text-sm">
+                          {formatThaiDate(formData.date)}
+                        </div> */}
                       </div>
                       <div className="group">
                         <label className="flex items-center gap-1.5 text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 ml-1">
@@ -376,8 +375,8 @@ export default function SalesLogForm() {
                   <div className="pt-2">
                     <button
                       type="submit"
-                      disabled={submitting}
-                      className="group relative w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-emerald-200 active:scale-[0.98] overflow-hidden text-sm"
+                      disabled={submitting || !isFormValid()}
+                      className="group relative w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-emerald-200 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-emerald-600 overflow-hidden text-sm"
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                       <div className="relative flex justify-center items-center gap-2">

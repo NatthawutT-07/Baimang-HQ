@@ -106,7 +106,7 @@ export default function GuideSection() {
                 <div className="space-y-1">
                   <p className="text-[12px] font-bold text-slate-700">กำหนดการ: 1 พฤษภาคม 2569</p>
                   <p className="text-[12px] text-slate-500 leading-relaxed">
-                    ระบบจะมีการเพิ่ม <span className="font-semibold text-slate-700 underline decoration-amber-300">Delay สำหรับ Scoreboard</span> โดยข้อมูลยอดขายรวมจะทำการอัปเดตใหม่ในทุกๆ <span className="font-bold text-slate-800">1 ชั่วโมง</span> เพื่อลดภาระการทำงานของเซิร์ฟเวอร์
+                    ระบบจะมีการเพิ่ม <span className="font-semibold text-slate-700 underline decoration-amber-300">Delay สำหรับ Scoreboard</span> โดยข้อมูลยอดขายรวมจะทำการอัปเดตใหม่ในทุกๆ <span className="font-bold text-slate-800">5 นาที</span> เพื่อลดภาระการทำงานของเซิร์ฟเวอร์
                   </p>
                 </div>
               </div>
@@ -118,7 +118,7 @@ export default function GuideSection() {
                 <div className="space-y-1">
                   <p className="text-[12px] font-bold text-slate-700">การเลือกวันที่บันทึกยอดขาย</p>
                   <p className="text-[12px] text-slate-500 leading-relaxed">
-                    ตั้งแต่วันที่ <span className="font-bold">1 พฤษภาคม 2569</span> เป็นต้นไป ระบบจะเริ่มเปิดให้เลือกวันที่บันทึกยอดขายได้ โดย <span className="font-semibold">จำกัดวันที่เริ่มต้นไว้ที่ 1 พ.ค. 2026</span> และไม่สามารถเลือกวันล่วงหน้าเกินวันปัจจุบันได้
+                    ระบบกำหนดให้บันทึกยอดขายได้ <span className="font-bold text-slate-700">เฉพาะวันปัจจุบันเท่านั้น</span> และบันทึกได้ <span className="font-bold text-slate-700">วันละ 1 ครั้งต่อคน</span> โดยไม่สามารถเลือกบันทึกย้อนหลังหรือล่วงหน้าได้
                   </p>
                 </div>
               </div>

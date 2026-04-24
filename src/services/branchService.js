@@ -2,27 +2,22 @@ import api from '../config/api';
 
 export const branchService = {
   getAll: async (params = {}) => {
-    const response = await api.get('/hq/branches', { params });
-    return response.data;
+    return await api.get('/hq/branches', { params });
   },
 
   getById: async (id) => {
-    const response = await api.get(`/hq/branches/${id}`);
-    return response.data;
+    return await api.get(`/hq/branches/${id}`);
   },
 
   create: async (data) => {
-    const response = await api.post('/hq/branches', data);
-    return response.data;
+    return await api.post('/hq/branches', data);
   },
 
   update: async (id, data) => {
-    const response = await api.put(`/hq/branches/${id}`, data);
-    return response.data;
+    return await api.put(`/hq/branches/${id}`, data);
   },
 
   delete: async (id) => {
-    const response = await api.delete(`/hq/branches/${id}`);
-    return response.data;
+    return await api.delete(`/hq/branches/${id}`);
   },
 };
