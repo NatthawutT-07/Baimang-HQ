@@ -13,22 +13,22 @@ export default function RewardSection() {
   const [formData, setFormData] = useState({ title: '', point_reward: '' });
 
   // --- Effects ---
-  useEffect(() => { 
-    fetchRewards(); 
+  useEffect(() => {
+    fetchRewards();
   }, []);
 
   // --- Data Fetching ---
   const fetchRewards = async () => {
     setLoading(true);
-    try { 
-      const res = await rewardService.getAll(); 
+    try {
+      const res = await rewardService.getAll();
       if (res.ok) {
         setRewards(res.data || []);
       }
-    } catch (err) { 
-      toast.error('ไม่สามารถโหลดข้อมูลรางวัลได้'); 
-    } finally { 
-      setLoading(false); 
+    } catch (err) {
+      toast.error('ไม่สามารถโหลดข้อมูลรางวัลได้');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -50,7 +50,7 @@ export default function RewardSection() {
         res = await rewardService.create(payload);
         if (res.ok) toast.success('เพิ่มรางวัลสำเร็จ');
       }
-      
+
       if (res.ok) {
         fetchRewards();
         handleCloseModal();
@@ -110,7 +110,7 @@ export default function RewardSection() {
             <p className="text-xs text-slate-400 mt-1">ทั้งหมด {rewards.length} รายการสำหรับพนักงาน</p>
           </div>
         </div>
-        <button 
+        <button
           onClick={() => setShowModal(true)}
           className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-sm active:scale-95"
         >
@@ -122,15 +122,15 @@ export default function RewardSection() {
       {/* Search Bar */}
       <div className="relative group">
         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
-        <input 
-          type="text" 
-          placeholder="ค้นหาชื่อของรางวัล..." 
+        <input
+          type="text"
+          placeholder="ค้นหาชื่อของรางวัล..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-10 pr-10 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 bg-white transition-all shadow-sm" 
+          className="w-full pl-10 pr-10 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 bg-white transition-all shadow-sm"
         />
         {searchTerm && (
-          <button 
+          <button
             onClick={() => setSearchTerm('')}
             className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 transition-colors"
           >
@@ -190,7 +190,7 @@ export default function RewardSection() {
               <div className="text-center py-24 bg-slate-50/30">
                 <Gift className="w-16 h-16 text-slate-200 mx-auto mb-4" />
                 <p className="text-sm text-slate-400 font-medium">ไม่พบข้อมูลรางวัลในขณะนี้</p>
-                <button 
+                <button
                   onClick={() => setShowModal(true)}
                   className="mt-4 text-blue-600 text-xs font-bold hover:underline"
                 >
@@ -209,7 +209,6 @@ export default function RewardSection() {
             <div className="px-8 py-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
               <div>
                 <h3 className="text-lg font-bold text-slate-800">{editingReward ? 'แก้ไขข้อมูลรางวัล' : 'เพิ่มรางวัลใหม่'}</h3>
-                <p className="text-xs text-slate-400 mt-0.5">ระบุชื่อและจำนวนแต้มที่พนักงานต้องใช้แลก</p>
               </div>
               <button onClick={handleCloseModal} className="p-2 text-slate-400 hover:text-slate-600 transition-colors">
                 <X className="w-6 h-6" />
@@ -219,13 +218,13 @@ export default function RewardSection() {
               <div className="space-y-5">
                 <div>
                   <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">ชื่อของรางวัล</label>
-                  <input 
-                    type="text" 
-                    value={formData.title} 
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })} 
-                    required 
-                    placeholder="เช่น บัตรกำนัล Starbucks 100 บาท"
-                    className={inputCls} 
+                  <input
+                    type="text"
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    required
+                    placeholder=""
+                    className={inputCls}
                   />
                 </div>
 
@@ -234,30 +233,30 @@ export default function RewardSection() {
                     <Star className="w-4 h-4 fill-current" />
                     <span className="text-xs font-bold uppercase tracking-wider">แต้มที่ต้องใช้แลก</span>
                   </div>
-                  <input 
-                    type="number" 
-                    min="0" 
-                    value={formData.point_reward} 
-                    onChange={(e) => setFormData({ ...formData, point_reward: e.target.value })} 
-                    required 
-                    placeholder="ระบุจำนวนแต้ม"
-                    className={`${inputCls} font-bold text-amber-700 text-lg`} 
+                  <input
+                    type="number"
+                    min="0"
+                    value={formData.point_reward}
+                    onChange={(e) => setFormData({ ...formData, point_reward: e.target.value })}
+                    required
+                    placeholder=""
+                    className={`${inputCls} font-bold text-amber-700 text-lg`}
                   />
                   <p className="text-[10px] text-amber-600/70 font-medium">พนักงานต้องมีแต้มสะสมเท่ากับหรือมากกว่าจำนวนนี้เพื่อแลกรับ</p>
                 </div>
               </div>
 
               <div className="flex gap-4 pt-2">
-                <button 
-                  type="button" 
-                  onClick={handleCloseModal} 
+                <button
+                  type="button"
+                  onClick={handleCloseModal}
                   className="flex-1 px-4 py-3 text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors"
                 >
                   ยกเลิก
                 </button>
-                <button 
-                  type="submit" 
-                  disabled={loading} 
+                <button
+                  type="submit"
+                  disabled={loading}
                   className="flex-[2] px-4 py-3.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-2xl transition-all shadow-lg shadow-blue-200 active:scale-95 disabled:opacity-50"
                 >
                   {loading ? 'กำลังบันทึก...' : (editingReward ? 'บันทึกการเปลี่ยนแปลง' : 'ยืนยันเพิ่มรางวัล')}

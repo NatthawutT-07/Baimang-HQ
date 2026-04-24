@@ -674,7 +674,6 @@ export default function EmployeeSection() {
             <div className="px-8 py-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
               <div>
                 <h3 className="text-lg font-bold text-slate-800">{editingEmployee ? 'แก้ไขข้อมูลพนักงาน' : 'เพิ่มพนักงานใหม่'}</h3>
-                <p className="text-xs text-slate-400 mt-0.5">ระบุรายละเอียดข้อมูลให้ครบถ้วน</p>
               </div>
               <button onClick={handleCloseModal} className="p-2 text-slate-400 hover:text-slate-600 transition-colors">
                 <X className="w-6 h-6" />
@@ -690,18 +689,18 @@ export default function EmployeeSection() {
                     onChange={(e) => setFormData({ ...formData, employee_code: e.target.value })}
                     required
                     disabled={!!editingEmployee}
-                    placeholder="ระบุรหัสพนักงาน (เช่น EMP001)"
+                    placeholder=""
                     className={`${inputCls} disabled:bg-slate-50 disabled:text-slate-400 disabled:border-slate-100`}
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">ชื่อเล่น / ชื่อเรียก</label>
+                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">ชื่อ-นามสกุล</label>
                   <input
                     type="text"
                     value={formData.nickname}
                     onChange={(e) => setFormData({ ...formData, nickname: e.target.value })}
                     required
-                    placeholder="ระบุชื่อเล่นพนักงาน"
+                    placeholder=""
                     className={inputCls}
                   />
                 </div>
