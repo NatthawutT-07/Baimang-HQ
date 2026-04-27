@@ -120,7 +120,7 @@ export default function RewardSection() {
       </div>
 
       {/* Search Bar */}
-      <div className="relative group">
+      {/* <div className="relative group">
         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
         <input
           type="text"
@@ -137,7 +137,7 @@ export default function RewardSection() {
             <X className="h-4 w-4" />
           </button>
         )}
-      </div>
+      </div> */}
 
       {/* Reward Grid/Table */}
       <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">

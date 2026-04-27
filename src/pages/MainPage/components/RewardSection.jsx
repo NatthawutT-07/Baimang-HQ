@@ -120,7 +120,7 @@ export default function RewardSection() {
 
     } catch (err) {
       console.error(err);
-      setError('เกิดข้อผิดพลาดในการแลกรางวัล กรุณาลองใหม่อีกครั้ง');
+      setError(err.message || 'เกิดข้อผิดพลาดในการแลกรางวัล กรุณาลองใหม่อีกครั้ง');
     } finally {
       setRedeemLoading(false);
     }
@@ -214,13 +214,16 @@ export default function RewardSection() {
                   </div>
                   <h4 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">แลกรางวัลสำเร็จ!</h4>
                   <p className="text-sm sm:text-base text-gray-600 mb-6">
-                    ยินดีด้วย! คุณได้ทำการแลก <strong>{selectedReward.title}</strong> เรียบร้อยแล้ว รอตรวจสอบและจัดส่งของรางวัล
+                    ยินดีด้วย! คุณได้ทำการแลก <strong>{selectedReward.title}</strong> เรียบร้อยแล้ว
                   </p>
                   <button
-                    onClick={handleClose}
+                    onClick={() => {
+                      handleClose();
+                      window.location.href = 'https://line.me/ti/p/bmphHYrGzm';
+                    }}
                     className="w-full bg-emerald-600 text-white px-4 py-3 rounded-xl font-medium hover:bg-emerald-500 transition-colors"
                   >
-                    ปิดหน้าต่าง
+                    แจ้งรับรางวัลผ่าน Line
                   </button>
                 </div>
               ) : (

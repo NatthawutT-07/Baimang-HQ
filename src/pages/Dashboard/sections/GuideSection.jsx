@@ -54,7 +54,7 @@ export default function GuideSection() {
                 <div className="mt-3 p-3 bg-amber-50 rounded-xl border border-amber-100 flex gap-3">
                   <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                   <p className="text-[11px] text-amber-700 leading-relaxed font-medium">
-                    สำหรับการส่งมอบของรางวัล: เมื่อมีการแลกรางวัลเกิดขึ้นในระบบ ผู้ดูแลระบบ (Admin) จะเป็นผู้ดำเนินการตรวจสอบและส่งมอบรางวัลให้แก่พนักงานด้วยตนเอง
+                    สำหรับการส่งมอบของรางวัล: เมื่อมีการแลกรางวัลเกิดขึ้นในระบบ พนักงานไปยังลิ้ง Line เพื่อแจ้งรับของรางวัล
                   </p>
                 </div>
               </div>
@@ -107,18 +107,6 @@ export default function GuideSection() {
                   <p className="text-[12px] font-bold text-slate-700">กำหนดการ: 1 พฤษภาคม 2569</p>
                   <p className="text-[12px] text-slate-500 leading-relaxed">
                     ระบบจะมีการเพิ่ม <span className="font-semibold text-slate-700 underline decoration-amber-300">Delay สำหรับ Scoreboard</span> โดยข้อมูลยอดขายรวมจะทำการอัปเดตใหม่ในทุกๆ <span className="font-bold text-slate-800">5 นาที</span> เพื่อลดภาระการทำงานของเซิร์ฟเวอร์
-                  </p>
-                </div>
-              </div>
-
-              <div className="p-3 bg-blue-50/50 rounded-xl border border-blue-100 flex gap-3">
-                <div className="mt-0.5">
-                  <Calendar className="w-3.5 h-3.5 text-blue-500" />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-[12px] font-bold text-slate-700">การเลือกวันที่บันทึกยอดขาย</p>
-                  <p className="text-[12px] text-slate-500 leading-relaxed">
-                    ระบบกำหนดให้บันทึกยอดขายได้ <span className="font-bold text-slate-700">เฉพาะวันปัจจุบันเท่านั้น</span> และบันทึกได้ <span className="font-bold text-slate-700">วันละ 1 ครั้งต่อคน</span> โดยไม่สามารถเลือกบันทึกย้อนหลังหรือล่วงหน้าได้
                   </p>
                 </div>
               </div>

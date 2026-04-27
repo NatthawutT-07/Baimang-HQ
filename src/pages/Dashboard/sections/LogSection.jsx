@@ -146,7 +146,7 @@ export default function LogSection() {
 
         <div className="flex flex-wrap items-center gap-3">
           {/* Export Controls */}
-          {/* <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm">
             <select
               value={exportMonth}
               onChange={(e) => setExportMonth(parseInt(e.target.value))}
@@ -169,7 +169,7 @@ export default function LogSection() {
               <Download className="w-3.5 h-3.5" />
               {exporting ? 'กำลังส่งออก...' : 'Export Excel'}
             </button>
-          </div> */}
+          </div>
 
           <div className="h-8 w-px bg-slate-200 hidden sm:block" />
 

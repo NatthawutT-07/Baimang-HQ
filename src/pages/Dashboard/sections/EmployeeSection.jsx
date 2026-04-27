@@ -260,7 +260,7 @@ export default function EmployeeSection() {
             target: null,
             sales: null,
             point: parseInt(pointAmount),
-            reward: pointNote || 'เพิ่มคะแนนโดยผู้บริหาร'
+            reward: pointNote || 'เพิ่มคะแนนโดยระบบ'
           });
         }
         toast.success('ปรับปรุงแต้มพนักงานสำเร็จ');
@@ -458,12 +458,12 @@ export default function EmployeeSection() {
               <h3 className="text-lg font-bold text-slate-800">ระบบเพิ่มแต้มคะแนน</h3>
             </div>
           </div>
-          <button
+          {/* <button
             onClick={handleResetAllPoints}
             className="flex items-center gap-2 px-5 py-2.5 bg-rose-50 text-rose-600 border border-rose-100 rounded-xl text-xs font-bold hover:bg-rose-100 transition-all shadow-sm"
           >
             <Zap className="w-4 h-4" /> ล้างแต้มพนักงานทุกคน
-          </button>
+          </button> */}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

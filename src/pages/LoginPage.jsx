@@ -66,15 +66,10 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f8fafc] px-4 py-8 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:20px_20px]">
       <div className="w-full max-w-[440px] animate-in fade-in zoom-in-95 duration-500">
-        
+
         {/* Logo/Brand Area */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-emerald-600 rounded-[2rem] shadow-xl shadow-emerald-200 mb-6 rotate-3 hover:rotate-0 transition-transform duration-300">
-            {isRegister ? <UserPlus className="h-10 w-10 text-white" /> : <LogIn className="h-10 w-10 text-white" />}
-          </div>
-          <h1 className="text-3xl font-black text-slate-800 tracking-tight">
-            {isRegister ? 'สร้างบัญชีใหม่' : 'ยินดีต้อนรับกลับมา'}
-          </h1>
+
           <p className="text-slate-400 text-sm mt-2 font-medium">
             {isRegister ? 'กรอกรายละเอียดเพื่อเริ่มต้นใช้งาน' : 'เข้าสู่ระบบบริหารจัดการ HQ'}
           </p>
@@ -83,7 +78,7 @@ export default function LoginPage() {
         {/* Login Card */}
         <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/60 border border-slate-100 p-8 sm:p-10 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-full -mr-16 -mt-16 opacity-50" />
-          
+
           <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
             <div>
               <label className={labelCls}>รหัสพนักงาน</label>
@@ -210,7 +205,7 @@ export default function LoginPage() {
 
         {/* Footer info */}
         <div className="mt-8 flex items-center justify-center gap-6 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">BrightMind HQ System v2.0</p>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">BrightMind HQ System</p>
         </div>
       </div>
     </div>

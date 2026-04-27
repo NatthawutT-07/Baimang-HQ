@@ -21,11 +21,11 @@ export default function SalesLogForm() {
 
   const getThaiTime = () => {
     const d = new Date();
-    const formatter = new Intl.DateTimeFormat('en-GB', { 
-      timeZone: 'Asia/Bangkok', 
-      hour: '2-digit', 
+    const formatter = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Bangkok',
+      hour: '2-digit',
       minute: '2-digit',
-      hour12: false 
+      hour12: false
     });
     return formatter.format(d);
   };
@@ -334,17 +334,17 @@ export default function SalesLogForm() {
                           <Calendar className="w-3 h-3" />
                           วันที่
                         </label>
-                        <input
+                        {/* <input
                           type="date"
                           name="date"
                           value={formData.date}
                           onChange={handleChange}
                           className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-3 py-2.5 focus:bg-white focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/10 transition-all text-gray-700 text-sm font-medium"
                           required
-                        />
-                        {/* <div className="w-full bg-gray-100 border border-gray-100 rounded-xl px-3 py-2.5 text-gray-500 font-bold text-center text-sm">
+                        /> */}
+                        <div className="w-full bg-gray-100 border border-gray-100 rounded-xl px-3 py-2.5 text-gray-500 font-bold text-center text-sm">
                           {formatThaiDate(formData.date)}
-                        </div> */}
+                        </div>
                       </div>
                       <div className="group">
                         <label className="flex items-center gap-1.5 text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 ml-1">
