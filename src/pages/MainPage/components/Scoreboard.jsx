@@ -111,21 +111,23 @@ export default function Scoreboard() {
                   return (
                     <div key={emp.employee_code} className={`flex items-center justify-between border border-emerald-50 rounded-xl px-3 py-3 shadow-sm transition-colors ${tier.rowColor}`}>
                       <div className="flex items-center space-x-3 min-w-0">
-                        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                          rank === 1 ? 'bg-amber-100 text-amber-600 scale-110 shadow-sm shadow-amber-200' : 
-                          rank === 2 ? 'bg-slate-100 text-slate-500 shadow-sm shadow-slate-200' : 
-                          rank === 3 ? 'bg-orange-50 text-orange-600 shadow-sm shadow-orange-200' : 
-                          'bg-emerald-50 text-emerald-700'
+                        <div className={`flex-shrink-0 flex items-center justify-center font-bold transition-all ${
+                          rank === 1 ? 'w-10 h-10' : 
+                          rank === 2 ? 'w-9 h-9' : 
+                          'w-8 h-8'
                         }`}>
-                          {rank === 1 ? '👑' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank}
+                          {rank === 1 ? <span className="text-2xl leading-none">👑</span> : 
+                           rank === 2 ? <span className="text-xl leading-none">🥈</span> : 
+                           rank === 3 ? <span className="text-xl leading-none">🥉</span> : 
+                           <span className="text-sm leading-none">{rank}</span>}
                         </div>
-                        <div className="min-w-0">
+                        <div className="min-w-0 flex flex-col justify-center">
                           <div className="text-sm font-medium text-gray-900 truncate">{emp.nickname}</div>
-                          <div className="text-xs text-gray-500">{emp.employee_code}</div>
+                          <div className="text-xs text-gray-500 leading-none">{emp.employee_code}</div>
                         </div>
                       </div>
                       <div className="flex items-center space-x-2 flex-shrink-0">
-                        <div className="text-right flex items-baseline space-x-1">
+                        <div className="text-right flex items-center space-x-1">
                           <span className="text-base font-bold text-gray-900">{emp.point_earned || 0}</span>
                           <span className="text-[10px] text-gray-500 font-medium">คะแนน</span>
                         </div>
@@ -157,23 +159,29 @@ export default function Scoreboard() {
                       const tier = getTierInfo(emp.point_earned);
                       return (
                         <tr key={emp.employee_code} className={`transition-colors ${tier.rowColor}`}>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold text-center">
-                            {rank === 1 ? <span className="text-xl">👑</span> : 
-                             rank === 2 ? <span className="text-xl">🥈</span> : 
-                             rank === 3 ? <span className="text-xl">🥉</span> : 
-                             rank}
+                          <td className="px-6 py-4 whitespace-nowrap text-center align-middle">
+                            <div className="flex items-center justify-center min-h-[40px]">
+                              {rank === 1 ? <span className="text-3xl leading-none">👑</span> : 
+                               rank === 2 ? <span className="text-2xl leading-none">🥈</span> : 
+                               rank === 3 ? <span className="text-xl leading-none">🥉</span> : 
+                               <span className="text-sm font-bold text-gray-900">{rank}</span>}
+                            </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {emp.employee_code} - {emp.nickname}
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 align-middle">
+                            <div className="flex items-center h-full">
+                              {emp.employee_code} - {emp.nickname}
+                            </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center font-bold">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center font-bold align-middle">
                             {emp.point_earned || 0}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-center">
-                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${tier.color}`}>
-                              <span className="mr-1">{tier.icon}</span>
-                              {tier.name}
-                            </span>
+                          <td className="px-6 py-4 whitespace-nowrap text-center align-middle">
+                            <div className="flex justify-center">
+                              <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${tier.color}`}>
+                                <span className="mr-1">{tier.icon}</span>
+                                {tier.name}
+                              </span>
+                            </div>
                           </td>
                         </tr>
                       );
