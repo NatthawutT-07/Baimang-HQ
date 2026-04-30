@@ -160,14 +160,14 @@ export default function SalesLogForm() {
 
   return (
     <>
-      <button
+      {/* <button
         onClick={openModal}
         disabled={loading}
         className="flex items-center justify-center space-x-1.5 sm:space-x-2 bg-white text-emerald-600 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg hover:bg-emerald-50 transition-colors shadow-sm w-auto disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm sm:text-base"
       >
         <TrendingUp className="h-5 w-5" />
         <span className="text-base font-medium">{loading ? 'กำลังโหลด...' : 'บันทึกยอดขาย'}</span>
-      </button>
+      </button> */}
 
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">

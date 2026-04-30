@@ -21,7 +21,7 @@ export default function Navbar() {
   return (
     <nav className="bg-gradient-to-r from-emerald-600 to-emerald-500 shadow-lg relative z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16 sm:h-20">
+        <div className="flex justify-center items-center h-14 sm:h-18">
           <div
             className="flex items-center gap-3 sm:gap-4 cursor-pointer group transition-all duration-300 active:scale-95"
             onClick={() => navigate('/')}
@@ -36,10 +36,7 @@ export default function Navbar() {
             </div>
             <div className="flex flex-col">
               <span className="text-white text-base sm:text-xl font-black tracking-tight leading-tight drop-shadow-md">
-                BAIMIANG
-              </span>
-              <span className="text-emerald-50 text-[9px] sm:text-[11px] font-bold uppercase tracking-[0.2em] -mt-0.5 opacity-80 group-hover:opacity-100 transition-opacity">
-                Healthy Shop
+                BAIMIANG Healthy Shop
               </span>
             </div>
           </div>

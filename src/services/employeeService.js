@@ -29,6 +29,10 @@ export const employeeService = {
     return await api.post('/hq/employees/reset-all-points');
   },
 
+  bulkAddPoints: async (employee_hits) => {
+    return await api.post('/hq/employees/bulk-add-points', { employee_hits });
+  },
+
   update: async (id, data) => {
     return await api.put(`/hq/employees/${id}`, data);
   },

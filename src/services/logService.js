@@ -13,6 +13,10 @@ export const logService = {
     return await api.post('/hq/logs', data);
   },
 
+  bulkHitTarget: async (entries, date) => {
+    return await api.post('/hq/logs/bulk-hit-target', { entries, date });
+  },
+
   update: async (id, data) => {
     return await api.put(`/hq/logs/${id}`, data);
   },

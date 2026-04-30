@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Building2, Gift, Users, FileText, Menu, X, LayoutDashboard, ChevronRight, LogOut, Activity, Info } from 'lucide-react';
+import { Building2, Gift, Users, FileText, Menu, X, LayoutDashboard, ChevronRight, LogOut, Activity, Info, Target } from 'lucide-react';
 import { authService } from '../../services/authService';
 import BranchSection from './sections/BranchSection';
 import RewardSection from './sections/RewardSection';
 import EmployeeSection from './sections/EmployeeSection';
 import LogSection from './sections/LogSection';
 import GuideSection from './sections/GuideSection';
+import HitTargetSection from './sections/HitTargetSection';
 
 const SECTIONS = {
   BRANCHES: 'branches',
+  HIT_TARGET: 'hit_target',
   REWARDS: 'rewards',
   EMPLOYEES: 'employees',
   LOGS: 'logs',
@@ -18,6 +20,7 @@ const SECTIONS = {
 
 const sectionMeta = {
   [SECTIONS.BRANCHES]: { description: '' },
+  [SECTIONS.HIT_TARGET]: { description: '' },
   [SECTIONS.REWARDS]: { description: '' },
   [SECTIONS.EMPLOYEES]: { description: '' },
   [SECTIONS.LOGS]: { description: '' },
@@ -46,12 +49,15 @@ export default function DashboardPage() {
     { id: SECTIONS.REWARDS, label: 'Rewards', sublabel: 'รางวัล', icon: Gift, accent: 'from-amber-500 to-orange-500' },
     { id: SECTIONS.EMPLOYEES, label: 'Employees', sublabel: 'พนักงาน', icon: Users, accent: 'from-violet-500 to-purple-600' },
     { id: SECTIONS.LOGS, label: 'Logs', sublabel: 'บันทึกระบบ', icon: FileText, accent: 'from-emerald-500 to-teal-600' },
-    { id: SECTIONS.GUIDE, label: 'Guide', sublabel: 'คำแนะนำการใช้งาน', icon: Info, accent: 'from-blue-500 to-indigo-600' },
+    { id: SECTIONS.HIT_TARGET, label: 'Hit Target Check', sublabel: 'ตรวจสอบยอดขาย', icon: Target, accent: 'from-pink-500 to-rose-500' },
+
+    // { id: SECTIONS.GUIDE, label: 'Guide', sublabel: 'คำแนะนำการใช้งาน', icon: Info, accent: 'from-blue-500 to-indigo-600' },
   ];
 
   const renderSection = () => {
     switch (activeSection) {
       case SECTIONS.BRANCHES: return <BranchSection />;
+      case SECTIONS.HIT_TARGET: return <HitTargetSection />;
       case SECTIONS.REWARDS: return <RewardSection />;
       case SECTIONS.EMPLOYEES: return <EmployeeSection />;
       case SECTIONS.LOGS: return <LogSection />;
