@@ -135,7 +135,14 @@ export default function BranchSection() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold text-slate-800">จัดการสาขา</h2>
-          <p className="text-xs text-slate-400 mt-1">ทั้งหมด {branches.length} สาขา</p>
+          <div className="text-xs text-slate-400 mt-1 flex flex-wrap items-center gap-2">
+            <span>ทั้งหมด {branches.length} สาขา</span>
+            {searchTerm && <span className="text-slate-300">|</span>}
+            {searchTerm && <span className="text-blue-600 font-medium">ค้นพบ {filteredBranches.length} สาขา</span>}
+            <span className="text-slate-300">|</span>
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 font-bold text-[10px] border border-emerald-100">เปิดใช้งาน {branches.filter(b => b.status === 'active').length}</span>
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-50 text-slate-500 font-bold text-[10px] border border-slate-200">ปิดใช้งาน {branches.filter(b => b.status === 'inactive').length}</span>
+          </div>
         </div>
         <button
           onClick={() => setShowModal(true)}
@@ -175,56 +182,56 @@ export default function BranchSection() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm whitespace-nowrap">
+            <table className="w-full text-left text-xs whitespace-nowrap">
               <thead className="bg-slate-50/80 border-b border-slate-200">
-                <tr className="text-[11px] uppercase tracking-wider text-slate-500 font-bold">
-                  <th className="px-4 py-3">ข้อมูลสาขา</th>
-                  <th className="px-4 py-3 text-center">เดือน / จำนวนวัน</th>
-                  <th className="px-4 py-3 text-right">เป้าหมายรวม</th>
-                  <th className="px-4 py-3 text-right">เฉลี่ยต่อวัน</th>
-                  <th className="px-4 py-3 text-center">สถานะ</th>
-                  <th className="px-4 py-3 text-center">จัดการ</th>
+                <tr className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">
+                  <th className="px-3.5 py-2.5">ข้อมูลสาขา</th>
+                  <th className="px-3.5 py-2.5 text-center">เดือน / จำนวนวัน</th>
+                  <th className="px-3.5 py-2.5 text-right">เป้าหมายรวม</th>
+                  <th className="px-3.5 py-2.5 text-right">เฉลี่ยต่อวัน</th>
+                  <th className="px-3.5 py-2.5 text-center">สถานะ</th>
+                  <th className="px-3.5 py-2.5 text-center">จัดการ</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {filteredBranches.map((branch) => (
                   <tr key={branch.id} className="hover:bg-slate-50/50 transition-colors group">
-                    <td className="px-4 py-3">
+                    <td className="px-3.5 py-2.5">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-[10px] text-slate-400 font-mono">#{branch.branch_code}</span>
+                        <span className="text-[9px] text-slate-400 font-mono">#{branch.branch_code}</span>
                         <span className="font-bold text-slate-800">{branch.branch_name}</span>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-center">
+                    <td className="px-3.5 py-2.5 text-center">
                       <div className="flex items-center justify-center gap-1.5 text-slate-600 font-bold">
                         <span>{branch.month}</span>
-                        <span className="text-[10px] text-slate-400 font-normal">({branch.day} วัน)</span>
+                        <span className="text-[9px] text-slate-400 font-normal">({branch.day} วัน)</span>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-3.5 py-2.5 text-right">
                       <span className="font-bold text-slate-800">{branch.target?.toLocaleString()}</span>
-                      <span className="ml-1 text-[10px] text-slate-400">฿</span>
+                      <span className="ml-1 text-[9px] text-slate-400">฿</span>
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-3.5 py-2.5 text-right">
                       <span className="font-black text-blue-600">
                         {(branch.avg_target || (branch.target / branch.day)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </span>
-                      <span className="ml-1 text-[10px] text-slate-400">฿</span>
+                      <span className="ml-1 text-[9px] text-slate-400">฿</span>
                     </td>
-                    <td className="px-4 py-3 text-center">
+                    <td className="px-3.5 py-2.5 text-center">
                       <button
                         onClick={() => toggleBranchStatus(branch)}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold transition-all border ${branch.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-100' : 'bg-slate-50 text-slate-400 border-slate-200 hover:bg-slate-100'
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-bold transition-all border ${branch.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-100' : 'bg-slate-50 text-slate-400 border-slate-200 hover:bg-slate-100'
                           }`}
                       >
                         <div className={`w-1.5 h-1.5 rounded-full ${branch.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`} />
                         {branch.status === 'active' ? 'เปิดใช้งาน' : 'ปิดใช้งาน'}
                       </button>
                     </td>
-                    <td className="px-4 py-3 text-center">
-                      <div className="flex items-center justify-center gap-1">
-                        <button onClick={() => handleEdit(branch)} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="แก้ไข"><Edit2 className="h-4 w-4" /></button>
-                        <button onClick={() => handleDelete(branch.id)} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="ลบ"><Trash2 className="h-4 w-4" /></button>
+                    <td className="px-3.5 py-2.5 text-center">
+                      <div className="flex items-center justify-center gap-0.5">
+                        <button onClick={() => handleEdit(branch)} className="p-1 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="แก้ไข"><Edit2 className="h-3.5 w-3.5" /></button>
+                        <button onClick={() => handleDelete(branch.id)} className="p-1 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="ลบ"><Trash2 className="h-3.5 w-3.5" /></button>
                       </div>
                     </td>
                   </tr>
@@ -274,7 +281,6 @@ export default function BranchSection() {
                       type="text"
                       value={formData.branch_name}
                       onChange={(e) => setFormData({ ...formData, branch_name: e.target.value })}
-                      required
                       placeholder=""
                       className={inputCls}
                     />
