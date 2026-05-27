@@ -19,7 +19,7 @@ export default function LoginPage() {
   });
 
   // --- Handlers ---
-  const handleChange = (e) => {
+  const handleChange = (e) => { 
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
