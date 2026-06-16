@@ -4,6 +4,7 @@ import { employeeService } from '../../../services/employeeService';
 
 export default function Scoreboard() {
   const [employees, setEmployees] = useState([]);
+  const [tierCounts, setTierCounts] = useState({ Diamond: 0, Gold: 0, Silver: 0, Non: 0 });
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -11,11 +12,24 @@ export default function Scoreboard() {
   const fetchData = async () => {
     try {
       const res = await employeeService.getAll({ limit: 1000 });
-      const normalEmployees = (res.data || [])
-        .filter(emp => emp.role !== 'admin' && emp.status === 'active')
+      const rawEmployees = res.data || [];
+
+      // Filter all active normal employees (including 0 points) for tier stats
+      const activeNormal = rawEmployees.filter(emp => emp.role !== 'admin' && emp.status === 'active');
+      
+      // Calculate tier counts using activeNormal
+      const counts = { Diamond: 0, Gold: 0, Silver: 0, Non: 0 };
+      activeNormal.forEach(emp => {
+        counts[getTierInfo(emp.point_earned).name]++;
+      });
+      setTierCounts(counts);
+
+      // Filter employees with > 0 points for the ranking list
+      const tableEmployees = activeNormal
+        .filter(emp => (emp.point_earned || 0) > 0)
         .sort((a, b) => (b.point_earned || 0) - (a.point_earned || 0));
 
-      setEmployees(normalEmployees);
+      setEmployees(tableEmployees);
     } catch (error) {
       console.error('Failed to fetch data:', error);
       alert('ไม่สามารถโหลดข้อมูลกระดานคะแนนได้');
@@ -36,15 +50,6 @@ export default function Scoreboard() {
     return { name: 'Non', color: '', rowColor: 'bg-orange-50', icon: '' };
   };
 
-  const getTierCounts = () => {
-    const counts = { Diamond: 0, Gold: 0, Silver: 0, Non: 0 };
-    employees.forEach(emp => {
-      counts[getTierInfo(emp.point_earned).name]++;
-    });
-    return counts;
-  };
-
-  const tierCounts = getTierCounts();
   const totalPages = Math.ceil(employees.length / itemsPerPage);
   const currentData = employees.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
@@ -144,12 +149,12 @@ export default function Scoreboard() {
             {/* Desktop Table View */}
             <div className="hidden sm:block border border-emerald-100 rounded-xl overflow-hidden shadow-sm">
               <table className="min-w-full divide-y divide-emerald-100">
-                <thead className="bg-emerald-50/60">
+                <thead className="bg-gradient-to-r from-amber-50 to-emerald-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-emerald-700 uppercase tracking-wider w-16 text-center">อันดับ</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-emerald-700 uppercase tracking-wider">พนักงาน</th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-emerald-700 uppercase tracking-wider">คะแนน</th>
-                    <th className="px-6 py-3 text-center text-xs font-medium text-emerald-700 uppercase tracking-wider">ระดับ (Tier)</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-emerald-700 uppercase tracking-wider w-16 text-center">อันดับ</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-emerald-700 uppercase tracking-wider">พนักงาน</th>
+                    <th className="px-6 py-3 text-center text-xs font-semibold text-emerald-700 uppercase tracking-wider">คะแนน</th>
+                    <th className="px-6 py-3 text-center text-xs font-semibold text-emerald-700 uppercase tracking-wider">ระดับ (Tier)</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-emerald-50">

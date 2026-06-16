@@ -9,9 +9,10 @@ export default function Navbar() {
   const isAuthenticated = authService.isAuthenticated();
   const user = authService.getCurrentUser();
 
-  // Hide Navbar on admin dashboard pages
+  // Hide Navbar on admin dashboard and login pages
   const isDashboard = location.pathname.startsWith('/dashboard');
-  if (isDashboard) return null;
+  const isLogin = location.pathname === '/login';
+  if (isDashboard || isLogin) return null;
 
   const handleLogout = () => {
     authService.logout();
@@ -29,7 +30,7 @@ export default function Navbar() {
             <div className="relative">
               <div className="absolute -inset-1.5 bg-white/30 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               <img
-                src="/images/favicon.png"
+                src="/images/NEW_Logo.png"
                 alt="Logo"
                 className="relative h-8 w-8 sm:h-10 sm:w-10 drop-shadow-lg transition-transform duration-500 group-hover:rotate-[360deg] group-hover:scale-110"
               />

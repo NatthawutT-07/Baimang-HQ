@@ -328,7 +328,7 @@ User กรอกข้อมูล
 ```
 frontend-HQ/
 ├── public/
-│   └── images/              # รูปภาพ (favicon, coupon)
+│   └── images/              # รูปภาพ (NEW_Logo, coupon)
 ├── src/
 │   ├── config/
 │   │   └── api.js           # Axios instance + interceptors

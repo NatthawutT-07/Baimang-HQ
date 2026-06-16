@@ -46,7 +46,13 @@ export default function EmployeeSection() {
     setLoading(true);
     try {
       const currentSearch = searchOverride !== undefined ? searchOverride : searchTerm;
-      const res = await employeeService.getAll({ limit: 10, offset, search: currentSearch });
+      const res = await employeeService.getAll({ 
+        limit: 10, 
+        offset, 
+        search: currentSearch,
+        sortBy: 'point_earned',
+        sortOrder: 'desc'
+      });
 
       if (res.ok) {
         setEmployees(res.data || []);
@@ -317,7 +323,7 @@ export default function EmployeeSection() {
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
           <input
             type="text"
-            placeholder="ค้นหาด้วยรหัส หรือชื่อเล่นพนักงาน..."
+            placeholder="ค้นหาด้วยรหัส หรือชื่อพนักงาน..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-10 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 bg-white transition-all shadow-sm"
@@ -352,9 +358,9 @@ export default function EmployeeSection() {
           <>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm whitespace-nowrap">
-                <thead className="bg-slate-50/80 border-b border-slate-200">
-                  <tr className="text-[11px] uppercase tracking-wider text-slate-500 font-bold">
-                    <th className="px-4 py-3 text-center">ID</th>
+                <thead className="bg-gradient-to-r from-slate-50 to-blue-50/30 border-b border-slate-200">
+                  <tr className="text-[11px] uppercase tracking-wider text-slate-600 font-bold whitespace-nowrap">
+                    <th className="px-4 py-3 text-center">ลำดับ</th>
                     <th className="px-4 py-3">ข้อมูลพนักงาน</th>
                     <th className="px-4 py-3">ตำแหน่ง / หน่วยงาน</th>
                     <th className="px-4 py-3 text-center">แต้มสะสม</th>
@@ -365,32 +371,32 @@ export default function EmployeeSection() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {employees.map((emp) => (
+                  {employees.map((emp, index) => (
                     <tr key={emp.id} className="hover:bg-slate-50/50 transition-colors group">
-                      <td className="px-4 py-3 text-center text-slate-400 font-mono text-[11px]">{emp.id}</td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 text-center text-slate-400 font-mono text-[11px] whitespace-nowrap">{pagination.offset + index + 1}</td>
+                      <td className="px-4 py-3 whitespace-nowrap">
                         <div className="flex items-center gap-1.5">
                           <span className="text-[10px] text-slate-400 font-mono">({emp.employee_code})</span>
                           <span className="font-bold text-slate-800">{emp.nickname}</span>
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <div className="flex items-center gap-1.5 text-slate-600 font-medium">
+                        <div className="flex items-center gap-1 text-slate-600 font-medium text-xs">
                           <span>{emp.position}</span>
                           <span className="text-slate-300">|</span>
-                          <span className="text-[11px] text-slate-400 font-normal">{emp.organizational_unit}</span>
+                          <span className="text-[10px] text-slate-400 font-normal">{emp.organizational_unit}</span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-center font-bold text-emerald-600">{emp.point_earned.toLocaleString()}</td>
-                      <td className="px-4 py-3 text-center font-bold text-blue-600">{emp.point_redeemed.toLocaleString()}</td>
-                      <td className="px-4 py-3 text-center">
+                      <td className="px-4 py-3 text-center font-bold text-emerald-600 whitespace-nowrap">{emp.point_earned.toLocaleString()}</td>
+                      <td className="px-4 py-3 text-center font-bold text-blue-600 whitespace-nowrap">{emp.point_redeemed.toLocaleString()}</td>
+                      <td className="px-4 py-3 text-center whitespace-nowrap">
                         <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${emp.role === 'admin' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-slate-50 text-slate-600 border border-slate-200'
                           }`}>
                           {emp.role === 'admin' ? <ShieldCheck className="w-3 h-3" /> : <Shield className="w-3 h-3" />}
                           {emp.role.toUpperCase()}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-center">
+                      <td className="px-4 py-3 text-center whitespace-nowrap">
                         <button
                           onClick={() => toggleEmployeeStatus(emp)}
                           className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold transition-all border ${emp.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-100' : 'bg-slate-50 text-slate-400 border-slate-200 hover:bg-slate-100'
@@ -400,7 +406,7 @@ export default function EmployeeSection() {
                           {emp.status === 'active' ? 'ใช้งาน' : 'ปิดใช้งาน'}
                         </button>
                       </td>
-                      <td className="px-4 py-3 text-center">
+                      <td className="px-4 py-3 text-center whitespace-nowrap">
                         <div className="flex items-center justify-center gap-1">
                           <button onClick={() => handleEdit(emp)} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="แก้ไข"><Edit2 className="h-4 w-4" /></button>
                           <button onClick={() => handleDelete(emp.id)} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="ลบ"><Trash2 className="h-4 w-4" /></button>
@@ -493,7 +499,7 @@ export default function EmployeeSection() {
                     <span className="text-[11px] text-slate-800 font-mono tracking-tighter">({targetEmployee.employee_code})</span>
                     <h4 className="font-bold text-slate-800">{targetEmployee.nickname}</h4>
                   </div>
-                  <span className="text-[10px] bg-white px-2 py-1 rounded-md text-emerald-600 font-bold border border-emerald-100 shadow-sm">ข้อมูลพบ</span>
+                  <span className="text-[10px] bg-white px-2 py-1 rounded-md text-emerald-600 font-bold border border-emerald-100 shadow-sm">พบข้อมูล</span>
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                   <div className="text-center">
@@ -643,23 +649,36 @@ export default function EmployeeSection() {
       {/* Confirmation Modals & CRUD Modal */}
       {confirmModal.show && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-[70] p-4 animate-in fade-in duration-300">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-xs overflow-hidden border border-slate-100 animate-in zoom-in-95 duration-200">
-            <div className="p-8 text-center">
-
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden border border-slate-100 animate-in zoom-in-95 duration-200">
+            <div className="p-8 text-center flex flex-col items-center">
+              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 ${
+                confirmModal.type === 'deduct'
+                  ? 'bg-rose-50 text-rose-500'
+                  : confirmModal.type?.includes('reset')
+                  ? 'bg-amber-50 text-amber-500'
+                  : 'bg-emerald-50 text-emerald-500'
+              }`}>
+                {confirmModal.type === 'deduct' && <TrendingDown className="w-7 h-7" />}
+                {confirmModal.type?.includes('reset') && <RotateCcw className="w-7 h-7" />}
+                {confirmModal.type === 'add' && <Star className="w-7 h-7 fill-emerald-500/20" />}
+              </div>
               <h3 className="text-lg font-bold text-slate-800 mb-2">ยืนยันการดำเนินการ</h3>
-              <p className="text-sm text-slate-500 leading-relaxed px-2">{confirmModal.message}</p>
+              <p className="text-sm text-slate-500 leading-relaxed px-4">{confirmModal.message}</p>
             </div>
             <div className="flex p-4 gap-3 bg-slate-50/50 border-t border-slate-100">
               <button
                 onClick={() => setConfirmModal({ ...confirmModal, show: false })}
-                className="flex-1 py-3 text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors"
+                className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 active:scale-[0.98] transition-all"
               >
                 ยกเลิก
               </button>
               <button
                 onClick={executeUpdatePoints}
-                className={`flex-2 px-8 py-3 rounded-xl text-sm font-bold text-white shadow-sm transition-all active:scale-95 ${confirmModal.type === 'deduct' || confirmModal.type.includes('reset') ? 'bg-rose-500 hover:bg-rose-600 shadow-rose-200' : 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-200'
-                  }`}
+                className={`flex-1 py-2.5 rounded-xl text-sm font-semibold text-white shadow-sm transition-all active:scale-[0.98] ${
+                  confirmModal.type === 'deduct' || confirmModal.type?.includes('reset')
+                    ? 'bg-rose-500 hover:bg-rose-600 shadow-rose-100'
+                    : 'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-100'
+                }`}
               >
                 ยืนยัน
               </button>
@@ -777,18 +796,18 @@ export default function EmployeeSection() {
                 </div>
               </div>
 
-              <div className="flex gap-4 pt-4">
+              <div className="flex gap-3 pt-4 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="flex-1 px-4 py-3 text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors"
+                  className="flex-1 py-2.5 text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all active:scale-[0.98]"
                 >
                   ยกเลิก
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-[2] px-4 py-3.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-2xl transition-all shadow-lg shadow-blue-200 active:scale-95 disabled:opacity-50"
+                  className="flex-1 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-sm shadow-blue-100 active:scale-[0.98] disabled:opacity-50"
                 >
                   {loading ? 'กำลังบันทึก...' : (editingEmployee ? 'บันทึกการเปลี่ยนแปลง' : 'ยืนยันเพิ่มพนักงาน')}
                 </button>

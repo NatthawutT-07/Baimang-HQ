@@ -280,9 +280,14 @@ export default function LogSection() {
                       </td>
                       <td className="px-4 py-3 text-right">
                         {log.action === 'ขาย' ? (
-                          <div className="flex items-center justify-end gap-2">
-                            <span className="text-slate-800 font-bold">{log.sales?.toLocaleString()}</span>
-                            <span className="text-[10px] text-slate-400">/ {log.target?.toLocaleString()}</span>
+                          <div className="inline-grid grid-cols-[1fr_12px_1fr] gap-1 font-mono text-sm min-w-[200px] tracking-tight">
+                            <span className="text-slate-900 font-bold text-right">
+                              {log.sales?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </span>
+                            <span className="text-slate-400 text-center">/</span>
+                            <span className="text-slate-500 text-left">
+                              {log.target?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </span>
                           </div>
                         ) : (
                           <span className={`font-bold ${['หักคะแนน'].includes(log.action) ? 'text-rose-600' : (['เพิ่มคะแนน', 'ขาย'].includes(log.action) ? 'text-emerald-600' : 'text-blue-600')}`}>{log.reward || '-'}</span>

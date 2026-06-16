@@ -67,7 +67,6 @@ export default function DashboardPage() {
   };
 
   const activeItem = menuItems.find(item => item.id === activeSection);
-  const meta = sectionMeta[activeSection];
 
   return (
     <div className="min-h-screen bg-[#f1f5f9] flex font-[Inter,system-ui,sans-serif]">
@@ -142,7 +141,7 @@ export default function DashboardPage() {
             </div>
             <div className="flex-1 text-left overflow-hidden min-w-0">
               <p className="text-[12px] font-semibold text-slate-300 group-hover:text-red-400 truncate transition-colors !m-0">{user?.nickname || 'Admin'}</p>
-              <p className="text-[10px] text-slate-600 group-hover:text-red-400/60 transition-colors !m-0">ออกจากระบบ</p>
+              <p className="text-[10px] text-slate-600 group-hover:text-red-400/60 transition-colors !m-0">sign out</p>
             </div>
             <LogOut className="w-4 h-4 shrink-0 opacity-0 group-hover:opacity-100 text-red-400 transition-all" />
           </button>
@@ -170,20 +169,6 @@ export default function DashboardPage() {
         {/* Content Area */}
         <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-x-hidden overflow-y-auto">
           <div className="max-w-7xl mx-auto space-y-5">
-            {/* Page Title */}
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
-              <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2.5 !m-0">
-                  <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${activeItem?.accent} flex items-center justify-center shadow-sm sm:hidden`}>
-                    {activeItem && <activeItem.icon className="w-4 h-4 text-white" />}
-                  </div>
-                  {activeItem?.label}
-                  <span className="text-[13px] font-normal text-slate-400 hidden sm:inline">/ {activeItem?.sublabel}</span>
-                </h1>
-                <p className="text-[13px] text-slate-500 mt-1">{meta?.description}</p>
-              </div>
-            </div>
-
             {/* Section Card */}
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200/70 p-4 sm:p-6 lg:p-7 min-h-[500px]">
               {renderSection()}
